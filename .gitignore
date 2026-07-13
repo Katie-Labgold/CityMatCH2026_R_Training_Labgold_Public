@@ -48,3 +48,9 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 .positai
+
+# ignore raw VS files folder
+vitalstats_raw_datafiles/
+
+# ignore archive folder
+archive/
