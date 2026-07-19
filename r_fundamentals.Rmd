@@ -10,10 +10,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 (1) R studio environment
-(2) R script vs markdown
-(3) Object-oriented language
-(4) packages - how to install, load, and use the help feature
-(5) Piping 
-(6) commenting in R
+(2) projects
+(3) R script vs markdown
+(4) Object-oriented language
+(5) packages - how to install, load, and use the help feature
+(6) Piping 
+(7) commenting in R
 
 **introduce the cheat sheet
