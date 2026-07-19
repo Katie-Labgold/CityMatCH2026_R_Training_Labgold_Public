@@ -1,0 +1,23 @@
+\usepackage{fontspec}
+\setmainfont{Arial}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\usepackage{xcolor}
+\definecolor{primaryblue}{HTML}{003F5C}
+\definecolor{accentgold}{HTML}{FFA600}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\color{primaryblue}\Large\bfseries}
+  {}
+  {0pt}
+  {\color{accentgold}\rule{0.8\linewidth}{3pt}\\}
+
+\titleformat{\subsection}
+  {\color{primaryblue}\large\bfseries}
+  {}
+  {0pt}
+  {\color{accentgold}\rule{0.4\linewidth}{2pt}\\}
+
