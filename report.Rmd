@@ -1,0 +1,52 @@
+---
+title: "U.S. Territory Preterm Births during 2020-2023 [COMPLETE EXAMPLE]"
+author: "K Labgold"
+date: "`r Sys.Date()`"
+output:
+  word_document: 
+    reference_docx: "mod_reference_template.docx"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Key Findings
+
+  + The number of live births in US Territories increased from X in 2020 to X in 2024.  
+  + The preterm birth rate was X in 2024, XXX trend XXX.  
+  + X age group had the highest preterm birth rate during 2020-2024  
+  + Race/ethnicity  
+  + Preterm birth was higher among xxx smoking, xxx diabetes, xxx hypertension. 
+    
+
+## {The number of births increased from 2020 to 2024}
+
+Make this one a table by year?
+
+## {Preterm birth rate increased from 2020 to 2024}
+
+line trend preterm birth rate by year
+
+## {age summary}
+
+bar chart: preterm birth rate by age
+
+## {race/ethnicity summary}
+
+bar chart: preterm birth rate by race/ethnicity 
+
+## {smoking, diabetes, hypertension summary}
+
+side by side bar chart: preterm birth rate by smoking, diabetes, hypertension
+
+
+## Recommendations
+
+**try making a figure with icons to insert?
+
+Contact information
+
+## Data Source and Methods
+
+Include link to where data was pulled

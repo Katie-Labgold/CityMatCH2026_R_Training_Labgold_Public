@@ -13,7 +13,7 @@
 # U.S. Territories Data: 2024, 2023, 2022, 2021, 2020, 2018
 # Used the 2018-2024 User Guide to identify the columns needed for the training example data
 
-pacman::p_load(readr, dplyr, here) # load r packages
+pacman::p_load(readr, dplyr, here, stringr, rio) # load r packages
 
 here() # to see root
 
@@ -66,15 +66,69 @@ ter.births.18 <- read_fwf(
   col_positions = col_spec18to24,
   col_types = cols(.default = col_character()) # read in as character class
 ) %>%
-  # drop a column for example
+  # set DMETH_REC to missing
   dplyr::select(-c("DMETH_REC"))
 
 
 # Rowbind 2020-2023 data files ----
-ter.births.2020_2023 <- ter.births.23 %>%
-                          bind_rows(ter.births.22, ter.births.21, ter.births.20)
+ter.births.2018_2023 <- ter.births.23 %>%
+                          bind_rows(ter.births.22, ter.births.21, ter.births.20, ter.births.18)
                   
-### nrow(ter.births.20) + nrow(ter.births.21) + nrow(ter.births.22) + nrow(ter.births.23) # check total
+### nrow(ter.births.18) + nrow(ter.births.20) + nrow(ter.births.21) + nrow(ter.births.22) + nrow(ter.births.23) # check total
+
+
+# Create a row id, based on year + row_number
+ter.births.2018_2023 <- ter.births.2018_2023 %>%
+                          mutate(id = paste0(str_sub(DOB_YY, -2, -1), row_number())) # stringer pull second to last character and stop at last character (i.e. pull 23 from 2023)
+
+ter.births.24 <- ter.births.24 %>%
+                          mutate(id = paste0(str_sub(DOB_YY, -2, -1), row_number()))
+
+# Split files to allow for column bind later
+
+territory.births.18_23.demographics <- ter.births.2018_2023 %>%
+                                          dplyr::select(id, DOB_YY, MAGER, MRACEHISP)
+territory.births.18_23.clinical <- ter.births.2018_2023 %>%
+                                          dplyr::select(-c(DOB_YY, MAGER, MRACEHISP)) %>%                                          # change DMETHREC, OEGest_R3 and DBWT to numeric
+                                          mutate(
+                                            DMETH_REC = as.numeric(DMETH_REC),
+                                            OEGest_R3 = as.numeric(OEGest_R3),
+                                            DBWT = as.numeric(DBWT)
+                                          )
+
+territory.births.24.demographics <- ter.births.24 %>%
+                                          dplyr::select(id, DOB_YY, MAGER, MRACEHISP)
+territory.births.24.clinical <- ter.births.24 %>%
+                                          dplyr::select(-c(DOB_YY, MAGER, MRACEHISP)) %>%
+                                          # change DMETHREC, OEGest_R3 and DBWT to numeric
+                                          mutate(
+                                            DMETH_REC = as.numeric(DMETH_REC),
+                                            OEGest_R3 = as.numeric(OEGest_R3),
+                                            DBWT = as.numeric(DBWT)
+                                          )
+
+
+# Remove unnecessary files ----
+rm(ter.births.18, ter.births.20, ter.births.21, ter.births.22, ter.births.23, col_spec18to24,
+   ter.births.2018_2023, ter.births.24)
+
+
+# Export 2020-2023 and 2024 to separate excel files ----
+## with separate sheets for demographic + clinical
+rio::export(list(demographic = territory.births.18_23.demographics,
+                 clinical = territory.births.18_23.clinical),
+            "territory_births_18to23.xlsx")
+
+rio::export(list(demographic = territory.births.24.demographics,
+                 clinical = territory.births.24.clinical),
+            "territory_births_24.xlsx")
+
+## Checking exports
+##demo.18to23 <- rio::import("territory_births_18to23.xlsx", which = "demographic")
+##clin.18to23 <- rio::import("territory_births_18to23.xlsx", which = "clinical")
+##demo.24 <- rio::import("territory_births_24.xlsx", which = "demographic")
+##clin.24 <- rio::import("territory_births_24.xlsx", which = "clinical")
+
 
 
 #--------------------------------------------------------#
