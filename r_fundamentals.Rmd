@@ -1,0 +1,19 @@
+---
+title: "R Fundamentals [COMPLETE]"
+author: "K Labgold"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+(1) R studio environment
+(2) R script vs markdown
+(3) Object-oriented language
+(4) packages - how to install, load, and use the help feature
+(5) Piping 
+(6) commenting in R
+
+**introduce the cheat sheet

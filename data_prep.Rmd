@@ -9,24 +9,91 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(rio, dplyr) # we list the packages we need here
 ```
 
-## R Markdown
+## 0. Overview
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Our objective is to create a report on preterm births for US territories during 2020-2024 using the publicly available live births data from XXXX.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+This document will cover the R syntax for your standard operations of:
+    + Load Data
+    + Explore data using basic summaries
+    + Join datasets together based on a shared column id
+    + Row bind datasets together
+    + Subset to only necessary columns
+    + Filter to specific conditions
+    + Create variables of different types (i.e., character, numeric, factor, etc.)
+    + Create new variables from existing variables
 
-```{r cars}
-summary(cars)
+## 1. Load Initial Datasets
+
+In this example we'll be loading in two excel files, each with two sheets. Let's use the `rio` package to pull in the 2020-2023 excel file.
+
+We will need to pull in each sheet separately: `demographic` and `clinical`
+
+```{r}
+demographic.18to23 <- rio::import("training_data_files/territory_births_18to23.xlsx", # excel file path
+                           which = "demographic") # sheet name
+
+clinical.18to23 <- rio::import("training_data_files/territory_births_18to23.xlsx",  # excel file path
+                           which = "clinical") # sheet name
 ```
 
-## Including Plots
+We should now see two objects for the datasets we loaded in our Environment window. In the environment window we can also see the number of observations and the number of variables in each object.
 
-You can also embed plots, for example:
+**Your turn!**
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+Create two objects, one named `demographic.24` that pulls in the 2024 births data demographic variables sheet, and `clinical.24` that pulls in the 2024 births data clinical variables sheet.
+
+```{r}
+demographic.24 <- rio::import("training_data_files/territory_births_24.xlsx", which = "demographic")
+
+clinical.24 <- rio::import("training_data_files/territory_births_24.xlsx", which = "clinical")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+For general awareness, R can load many other data types including: 
+    + XXX
+    + XXX
+    + XXX
+
+**Your turn!**
+
+Take a minute to use the help function to explore package functionality for 
+
+```{r}
+
+```
+
+## 2. Explore Data
+
+We can get a quick view of our data in the environment window by clicking the arrow next to the object name.
+
+If you click on the data, it will open as a new tab to view. This operates the same as calling the function:
+
+```{r}
+View(demographic.24)
+```
+
+names()
+
+Summary() function
+
+Class type
+
+table() function
+
+count missings
+
+
+
+## 3. Join Data
+
+
+## 4. Rowbind Data
+
+
+## 5. 
+
+
