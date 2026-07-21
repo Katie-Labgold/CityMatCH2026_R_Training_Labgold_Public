@@ -273,15 +273,48 @@ rm(births2020)
 
 # 6. Changing Variable Class Types
 
-Guide to class types:
+################## STOPPED HERE FIX TO ADD FACTOR OR JUST HIGHILGHT THE ONES WE USE MOST!!!!
+
+
+R has 5 basic classes of variables:
+1. logical (e.g., `TRUE`, `FALSE`): `as.logical()`
+2. integer: `as.integer()`
+3. numeric: `as.numeric()`
+4. character: `as.character()`
+5. complex: `as.complex()` - *not commonly used, but included for completeness*
 
 
 
-We will want to change:
-* MAGER: character --> integer
-* MRACEHISP: character --> factor
-* DMETH_REC: numeric --> factor
-* OEGest_R3: numeric --> factor
+
+In our data, we will want to change the following variable class types so that R will recognize them in the way we plan to use them in our analysis:
+* `MAGER`: character --> integer
+* `MRACEHISP`: character --> factor
+* `DMETH_REC`: numeric --> factor
+* `OEGest_R3:` numeric --> factor
+
+Recall in R, everything needs to be assigned because it is an object-oriented language. To do this, we will make a new variable for each of the above using the appropriate class function.
+
+Let's start with `OEGest_R3`, and use the `mutate()` function from the `dplyr` package to create a new variable named `OEGest_R3.fact`.
+
+For factors, we can also assign the level names and the reference value.
+
+
+```{r}
+births18to24_step6 <- births18to24_step5 %>%
+                        mutate(OEGest_R3.fact = factor(OEGest_R3,
+                                                          levels = c(2, 1), # list referent 1st
+                                                          labels = c("Term", "Preterm"))) # order must match the levels
+
+class(births18to24_step6$OEGest_R3.fact)
+levels(births18to24_step6$OEGest_R3.fact)
+
+table(births18to24_step6$OEGest_R3.fact, useNA = "always")
+```
+
+
+### Try it on your own!
+
+
 
 
 # 7. Creating Combined Variables

@@ -9,6 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+https://resbaz.github.io/2014-r-materials/lessons/01-intro_r/data-structures.html
+
+
 (1) R studio environment
 (2) projects
 (3) R script vs markdown
