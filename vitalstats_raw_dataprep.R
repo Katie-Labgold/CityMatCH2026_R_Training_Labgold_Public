@@ -97,7 +97,9 @@ territory.births.18_23.clinical <- ter.births.2018_2023 %>%
                                           )
 
 territory.births.24.demographics <- ter.births.24 %>%
-                                          dplyr::select(id, DOB_YY, MAGER, MRACEHISP)
+                                          dplyr::select(id, DOB_YY, MAGER, MRACEHISP) %>%
+                                          rename("id2" = "id")
+
 territory.births.24.clinical <- ter.births.24 %>%
                                           dplyr::select(-c(DOB_YY, MAGER, MRACEHISP)) %>%
                                           # change DMETHREC, OEGest_R3 and DBWT to numeric
@@ -117,11 +119,16 @@ rm(ter.births.18, ter.births.20, ter.births.21, ter.births.22, ter.births.23, co
 ## with separate sheets for demographic + clinical
 rio::export(list(demographic = territory.births.18_23.demographics,
                  clinical = territory.births.18_23.clinical),
-            "territory_births_18to23.xlsx")
+            "training_data_files/territory_births_18to23.xlsx")
 
 rio::export(list(demographic = territory.births.24.demographics,
                  clinical = territory.births.24.clinical),
-            "territory_births_24.xlsx")
+            "training_data_files/territory_births_24.xlsx")
+
+
+rm(territory.births.24.demographics, territory.births.24.clinical, territory.births.18_23.demographics,
+   territory.births.18_23.clinical)
+
 
 ## Checking exports
 ##demo.18to23 <- rio::import("territory_births_18to23.xlsx", which = "demographic")
@@ -176,3 +183,4 @@ names(list_of_dfs) <- custom_df_names
 
 # Expand from the large list to each having it's own df ----
 list2env(list_of_dfs, envir = .GlobalEnv)
+
