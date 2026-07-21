@@ -1,10 +1,11 @@
 ---
-title: "Data Preparation for 2020-2024 Preterm Births in US Territories Report [COMPLETE EXAMPLE]"
+title: "Data Preparation for 2020-2024 Preterm Births in US Territories Report" 
+subtitle: "[COMPLETE EXAMPLE]"
 author: "K Labgold"
 date: "`r Sys.Date()`"
 output:
   word_document: 
-    reference_docx: "mod_reference_template.docx"
+    reference_docx: "mod_reference_template_v2.docx"
 ---
 
 ```{r setup, include=FALSE}
@@ -12,21 +13,22 @@ knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(rio, dplyr) # we list the packages we need here
 ```
 
-## 0. Overview
+# 0. Overview
 
 Our objective is to create a report on preterm births for US territories during 2020-2024 using the publicly available live births data from XXXX.
 
-This document will cover the R syntax for your standard operations of:
-    + Load Data
-    + Explore data using basic summaries
-    + Join datasets together based on a shared column id
-    + Row bind datasets together
-    + Subset to only necessary columns
-    + Filter to specific conditions
-    + Create variables of different types (i.e., character, numeric, factor, etc.)
-    + Create new variables from existing variables
+This document will cover the R syntax for your standard operations of: 
 
-## 1. Load Initial Datasets
+- Load Data 
+- Explore data using basic summaries 
+- Join datasets together based on a shared column id 
+- Row bind datasets together 
+- Subset to only necessary columns 
+- Filter to specific conditions 
+- Create variables of different types (i.e., character, numeric, factor, etc.) 
+- Create new variables from existing variables 
+
+# 1. Load Initial Datasets
 
 In this example we'll be loading in two excel files, each with two sheets. Let's use the `rio` package to pull in the 2020-2023 excel file.
 
@@ -42,7 +44,7 @@ clinical.18to23 <- rio::import("training_data_files/territory_births_18to23.xlsx
 
 We should now see two objects for the datasets we loaded in our Environment window. In the environment window we can also see the number of observations and the number of variables in each object.
 
-**Your turn!**
+### Try it on your own!
 
 Create two objects, one named `demographic.24` that pulls in the 2024 births data demographic variables sheet, and `clinical.24` that pulls in the 2024 births data clinical variables sheet.
 
@@ -54,46 +56,269 @@ clinical.24 <- rio::import("training_data_files/territory_births_24.xlsx", which
 
 
 For general awareness, R can load many other data types including: 
-    + XXX
-    + XXX
-    + XXX
 
-**Your turn!**
+- XXX
+- XXX
+- XXX
 
-Take a minute to use the help function to explore package functionality for 
+### Try it on your own!
+
+Take a minute to first read about the haven package: https://haven.tidyverse.org/
+
+Then use the help function below to explore the function that loads data from your typical statistical analysis software package (e.g., SAS, SPSS, STATA).
 
 ```{r}
+# SAS
+?haven::read_sas()
+
+# SPSS
+?haven::read_spss()
+
+# STATA
+?haven::read_stata()
+```
+
+# 2. Explore Data
+
+Let's start with exploring demographic.18to23 file. We can get a quick view of our data in the environment window by clicking the arrow next to the object name.
+
+If you click on the data, it will open as a new tab. This operates the same as calling the function:
+
+```{r}
+View(demographic.18to23) # opens data frame as a new tab
+```
+
+Let's explore further to get:
+    + Names of the columns in our data frame using `names()`
+    + Basic attributes of each variable using `summary()`
+    + Class type of a variable `class()`
+    + Get a table of variable values `table()` *Note this function can also be used for crosstabs!*
+    + Count the number of missing values using `sum()` with `is.na()`
+    
+    
+```{r}
+####----Demographic 18 to 23----####
+
+# Columns in this data frame
+names(demographic.18to23)
+
+# Basic attributes of each variable
+summary(demographic.18to23)
+
+# Class type of a variable
+class(demographic.18to23$DOB_YY)
+
+# Table of variable
+table(demographic.18to23$DOB_YY, useNA = "always") # useNA = "always tells the table to include a count for any NA-type missings
+
+# Crosstab
+table("Year" = demographic.18to23$DOB_YY, 
+      "Race & Ethnicity" = demographic.18to23$MRACEHISP, 
+      useNA = "always")
+
+# Can also count missing values using is.na() nested in sum()
+sum(is.na(demographic.18to23$DOB_YY))
+```
+
+
+### Try it on your own!
+
+Explore the remaining three objects to get a sense of data structure.
+
+```{r}
+####----Clinical 18 to 23----####
+
+####----Demographic 2024----####
+
+####----Clinical 2024----####
 
 ```
 
-## 2. Explore Data
 
-We can get a quick view of our data in the environment window by clicking the arrow next to the object name.
 
-If you click on the data, it will open as a new tab to view. This operates the same as calling the function:
+# 3. Join Data
+
+For our desired output, we need to join the demographic and clinical variables for each year set. We will perform a left join using the demographic data frame as the base and joining the clinical data to it based on the shared "id". 
+
+You can read about other join types in R here: https://dplyr.tidyverse.org/reference/mutate-joins.html
 
 ```{r}
-View(demographic.24)
+births18to23 <- demographic.18to23 %>% # x
+                  left_join(clinical.18to23, # y
+                            by = c("id")) # shared id to join on 
+# if the id name is not the same across data frames, we would instead use `by = c("id.x" = "id.y") 
+
 ```
 
-names()
+### Try it on your own!
 
-Summary() function
+Create a new object named `births24` using a left_join from the demographic and clinical 2024 birth files.
 
-Class type
+```{r}
+births24 <- demographic.24 %>%
+              left_join(clinical.24,
+                        by = c("id" = "id2"))
+```
 
-table() function
+Using some of the explore data functions we previously used, check to confirm the join worked as intended.
 
-count missings
-
-
-
-## 3. Join Data
-
-
-## 4. Rowbind Data
+```{r}
 
 
-## 5. 
+```
 
+
+
+# 4. Rowbind Data
+
+Now to have one working data frame, we need to rowbind the 2018-2023 and 2024 data frames. As with most tasks in R, there are many functions available to do this. I tend to recommend the `bind_rows()` function from the `dplyr` package, since it (A) will automatically align columns -- i.e. you don't have to have them all in the same order already for each data frame -- and (B) it will fill in missing columns with the proper missing variable type.
+
+### Try it on your own!
+
+Using the R help function for `dplyr::bind_rows()` to row bind `births18to23` and `births24`. Name the new object `births18to24`. After making the new dataframe, explore the dataframe to ensure the operation worked as intended.
+
+```{r}
+# R helper
+?dplyr::bind_rows
+
+# row bind using dplyr::bind_rows()
+births18to24 <- bind_rows(births18to23, births24)
+
+# explore rowbind
+View(births18to24)
+table(births18to24$DOB_YY, useNA = "always")
+```
+## Clean out Environment
+Before we move on, let's clean up our environment a bit. We are are now working with `births18to24`, but we have several other objects still in our environment. We can remove no longer needed objects with the rm() function.
+
+```{r}
+rm(births18to23, births24, clinical.18to23, clinical.24, demographic.18to23, demographic.24)
+```
+
+If you look in your environment panel of the R Studio, you should now only have our 1 object remaining!
+
+
+# 5. Filtering Rows
+
+We have two primary filtering tasks for our report:
+
+1. Our report is going to focus only on 2020-2024 data so we need to remove rows from 2018
+2. The focus of our report is going to be on preterm births, so for this example we will need to filter to observations with gestational age information available. 
+
+Starting with task #1: filter to 2020-2024 years only:
+```{r}
+class(births18to24$DOB_YY) # character class type - will need quotes!
+
+births18to24 <- births18to24 %>%
+                            filter(DOB_YY %in% c("2020", "2021", "2022", "2023", "2024"))
+
+```
+
+A couple things to note about the above. In R, we use the logical `==` for equivalence but since we are filter from a list, we need to use the operator `%in%`. 
+
+You'll also notice that the years in a list `c()` and are quoted. Quotes are needed because the year class type is a character.
+
+### Try it on your own!
+
+What would it look like to filter only to 2020? Create a dummy dataframe named `births2020` that is only 2020 births.
+
+```{r}
+# Option 1: using ==
+births2020 <- births18to24 %>%
+                filter(DOB_YY == "2020")
+
+# Option 2: using %in%
+births2020 <- births18to24 %>%
+                filter(DOB_YY %in% c("2020")) # Can still use %in% for a list of 1!
+```
+
+
+### Try it on your own!
+
+Perform task #2: filter to births with gestational age data available [`OEGest_R3` value of 1 or 2]. Make the new object named `births18to24_step5`.
+
+**Hint:** The negative of `==` is `!=`.
+
+```{r}
+class(births18to24$OEGest_R3) # numeric - will NOT need quotes!
+
+births18to24_step5 <- births18to24 %>%
+                        filter(OEGest_R3 != 3) 
+                          
+table(births18to24_step5$OEGest_R3, useNA = "always")                             
+
+
+```
+
+As a bonus, we could filter using the opposite of `%in%`. Let's use the dummy `births2020` dataset as an example.
+
+We can create this using the built-in R function `Negate()`. Just one more great example of how flexible R is! 
+
+```{r}
+`%notin%` <- Negate(`%in%`)
+
+births2020 <- births2020 %>%
+                filter(OEGest_R3 %notin% c(3))
+
+table(births2020$OEGest_R3, useNA = "always")              
+```
+
+
+Let's now remove `births2020` from the environment because it was just for practice!
+
+```{r}
+rm(births2020)
+```
+
+
+# 6. Changing Variable Class Types
+
+Guide to class types:
+
+
+
+We will want to change:
+* MAGER: character --> integer
+* MRACEHISP: character --> factor
+* DMETH_REC: numeric --> factor
+* OEGest_R3: numeric --> factor
+
+
+# 7. Creating Combined Variables
+
+
+
+
+
+# 8. Selecting Columns
+
+
+
+
+
+# 9. Pulling it all together with pipes
+
+example of steps 5-8 in one code chunk
+
+```{r}
+
+
+
+```
+
+
+# 10. Save data as cleaned R data file
+
+```{r}
+
+
+```
+
+
+
+kable() test - use this for table formatting: https://rmarkdown.rstudio.com/articles_docx.html
+
+```{r}
+knitr::kable(table(births18to24$DOB_YY))
+```
 

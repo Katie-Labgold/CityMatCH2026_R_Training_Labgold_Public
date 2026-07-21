@@ -97,8 +97,7 @@ territory.births.18_23.clinical <- ter.births.2018_2023 %>%
                                           )
 
 territory.births.24.demographics <- ter.births.24 %>%
-                                          dplyr::select(id, DOB_YY, MAGER, MRACEHISP) %>%
-                                          rename("id2" = "id")
+                                          dplyr::select(id, DOB_YY, MAGER, MRACEHISP) 
 
 territory.births.24.clinical <- ter.births.24 %>%
                                           dplyr::select(-c(DOB_YY, MAGER, MRACEHISP)) %>%
@@ -107,7 +106,8 @@ territory.births.24.clinical <- ter.births.24 %>%
                                             DMETH_REC = as.numeric(DMETH_REC),
                                             OEGest_R3 = as.numeric(OEGest_R3),
                                             DBWT = as.numeric(DBWT)
-                                          )
+                                          ) %>%
+                                          rename("id2" = "id")
 
 
 # Remove unnecessary files ----
