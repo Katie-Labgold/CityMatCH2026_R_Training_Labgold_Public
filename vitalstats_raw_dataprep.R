@@ -20,10 +20,10 @@ here() # to see root
 
 # Select columns to be used during the training ----
 col_spec18to24 <- fwf_positions(
-                start = c(9, 75, 117, 266, 267, 268, 313, 314, 315, 316, 317, 408, 503, 504),
-                end =   c(12, 76, 117, 266, 267, 268, 313, 314, 315, 316, 317, 408, 503, 507),
+                start = c(9, 75, 117, 313, 314, 315, 316, 317, 408, 503, 504),
+                end =   c(12, 76, 117, 313, 314, 315, 316, 317, 408, 503, 507),
                 col_names = c("DOB_YY",
-                              "MAGER", "MRACEHISP", "F_CIGS_1", "F_CIGS_2", "F_CIGS_3",
+                              "MAGER", "MRACEHISP",
                               "RF_PDIAB", "RF_GDIAB", "RF_PHYPE", "RF_GHYPE",
                               "RF_EHYP", "DMETH_REC", "OEGest_R3", "DBWT")
 )
@@ -150,10 +150,10 @@ rm(territory.births.24.demographics, territory.births.24.clinical, territory.bir
 
 # Select columns to be used during the training ----
 col_spec18to24 <- fwf_positions(
-                    start = c(9, 75, 117, 266, 267, 268, 313, 314, 315, 316, 317, 408, 503, 504),
-                    end =   c(12, 76, 117, 266, 267, 268, 313, 314, 315, 316, 317, 408, 503, 507),
+                    start = c(9, 75, 117, 313, 314, 315, 316, 317, 408, 503, 504),
+                    end =   c(12, 76, 117, 313, 314, 315, 316, 317, 408, 503, 507),
                     col_names = c("DOB_YY",
-                                  "MAGER", "MRACEHISP", "F_CIGS_1", "F_CIGS_2", "F_CIGS_3",
+                                  "MAGER", "MRACEHISP", 
                                   "RF_PDIAB", "RF_GDIAB", "RF_PHYPE", "RF_GHYPE",
                                   "RF_EHYP", "DMETH_REC", "OEGest_R3", "DBWT")
                   )

@@ -13,11 +13,15 @@ knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(rio, dplyr) # we list the packages we need here
 ```
 
-# 0. Overview
+# Overview
 
 Our objective is to create a report on preterm births for US territories during 2020-2024 using the publicly available live births data from XXXX.
 
-This document will cover the R syntax for your standard operations of: 
+This document is split into X parts.
+
+# Part 1. Preparing our analytic data set
+
+Part 1 will cover the R syntax for your standard operations of: 
 
 - Load Data 
 - Explore data using basic summaries 
@@ -28,7 +32,7 @@ This document will cover the R syntax for your standard operations of:
 - Create variables of different types (i.e., character, numeric, factor, etc.) 
 - Create new variables from existing variables 
 
-# 1. Load Initial Datasets
+## 1. Load Initial Datasets
 
 In this example we'll be loading in two excel files, each with two sheets. Let's use the `rio` package to pull in the 2020-2023 excel file.
 
@@ -67,7 +71,7 @@ Take a minute to first read about the haven package: https://haven.tidyverse.org
 
 Then use the help function below to explore the function that loads data from your typical statistical analysis software package (e.g., SAS, SPSS, STATA).
 
-```{r}
+```{r, eval = FALSE}
 # SAS
 ?haven::read_sas()
 
@@ -78,7 +82,7 @@ Then use the help function below to explore the function that loads data from yo
 ?haven::read_stata()
 ```
 
-# 2. Explore Data
+## 2. Explore Data
 
 Let's start with exploring demographic.18to23 file. We can get a quick view of our data in the environment window by clicking the arrow next to the object name.
 
@@ -90,7 +94,8 @@ View(demographic.18to23) # opens data frame as a new tab
 
 Let's explore further to get:
     + Names of the columns in our data frame using `names()`
-    + Basic attributes of each variable using `summary()`
+    + Basic attributes of each variable using `str()` and `summary()`
+    + Explore first few or last few rows with `head()` and `tail()`
     + Class type of a variable `class()`
     + Get a table of variable values `table()` *Note this function can also be used for crosstabs!*
     + Count the number of missing values using `sum()` with `is.na()`
@@ -101,6 +106,13 @@ Let's explore further to get:
 
 # Columns in this data frame
 names(demographic.18to23)
+
+# Structure
+str(demographic.18to23)
+
+# First few or last few rows
+head(demographic.18to23)
+tail(demographic.18to23)
 
 # Basic attributes of each variable
 summary(demographic.18to23)
@@ -136,7 +148,7 @@ Explore the remaining three objects to get a sense of data structure.
 
 
 
-# 3. Join Data
+## 3. Join Data
 
 For our desired output, we need to join the demographic and clinical variables for each year set. We will perform a left join using the demographic data frame as the base and joining the clinical data to it based on the shared "id". 
 
@@ -163,13 +175,19 @@ births24 <- demographic.24 %>%
 Using some of the explore data functions we previously used, check to confirm the join worked as intended.
 
 ```{r}
+# columns in new dataset
+names(births24)
+
+# confirm values in first few rows
+head(births24)
+
 
 
 ```
 
 
 
-# 4. Rowbind Data
+## 4. Rowbind Data
 
 Now to have one working data frame, we need to rowbind the 2018-2023 and 2024 data frames. As with most tasks in R, there are many functions available to do this. I tend to recommend the `bind_rows()` function from the `dplyr` package, since it (A) will automatically align columns -- i.e. you don't have to have them all in the same order already for each data frame -- and (B) it will fill in missing columns with the proper missing variable type.
 
@@ -177,10 +195,12 @@ Now to have one working data frame, we need to rowbind the 2018-2023 and 2024 da
 
 Using the R help function for `dplyr::bind_rows()` to row bind `births18to23` and `births24`. Name the new object `births18to24`. After making the new dataframe, explore the dataframe to ensure the operation worked as intended.
 
-```{r}
+```{r, eval = FALSE}
 # R helper
 ?dplyr::bind_rows
+```
 
+```{r}
 # row bind using dplyr::bind_rows()
 births18to24 <- bind_rows(births18to23, births24)
 
@@ -188,7 +208,8 @@ births18to24 <- bind_rows(births18to23, births24)
 View(births18to24)
 table(births18to24$DOB_YY, useNA = "always")
 ```
-## Clean out Environment
+
+**Clean out Environment**
 Before we move on, let's clean up our environment a bit. We are are now working with `births18to24`, but we have several other objects still in our environment. We can remove no longer needed objects with the rm() function.
 
 ```{r}
@@ -198,7 +219,7 @@ rm(births18to23, births24, clinical.18to23, clinical.24, demographic.18to23, dem
 If you look in your environment panel of the R Studio, you should now only have our 1 object remaining!
 
 
-# 5. Filtering Rows
+## 5. Filtering Rows
 
 We have two primary filtering tasks for our report:
 
@@ -209,7 +230,7 @@ Starting with task #1: filter to 2020-2024 years only:
 ```{r}
 class(births18to24$DOB_YY) # character class type - will need quotes!
 
-births18to24 <- births18to24 %>%
+births20to24 <- births18to24 %>%
                             filter(DOB_YY %in% c("2020", "2021", "2022", "2023", "2024"))
 
 ```
@@ -240,12 +261,12 @@ Perform task #2: filter to births with gestational age data available [`OEGest_R
 **Hint:** The negative of `==` is `!=`.
 
 ```{r}
-class(births18to24$OEGest_R3) # numeric - will NOT need quotes!
+class(births20to24$OEGest_R3) # numeric - will NOT need quotes!
 
-births18to24_step5 <- births18to24 %>%
+births20to24_step5 <- births20to24 %>%
                         filter(OEGest_R3 != 3) 
                           
-table(births18to24_step5$OEGest_R3, useNA = "always")                             
+table(births20to24_step5$OEGest_R3, useNA = "always")                             
 
 
 ```
@@ -270,84 +291,474 @@ Let's now remove `births2020` from the environment because it was just for pract
 rm(births2020)
 ```
 
+## 6. Coding Missing Values
 
-# 6. Changing Variable Class Types
+`MRACEHISP` and `DMETH_REC` both have one value that is unknown/missing. 
 
-################## STOPPED HERE FIX TO ADD FACTOR OR JUST HIGHILGHT THE ONES WE USE MOST!!!!
+| **MRACEHISP** | **Label**             |
+| :---          | :---                  | 
+| 1             | Non-Hispanic White    |
+| 2             | Non-Hispanic Black    |
+| 3             | Non-Hispanic American Indian and Alaska Native    |
+| 4             | Non-Hispanic Asian    |
+| 5             | Non-Hispanic Native Hawaiian and Other Pacific Islander   |
+| 6             | Non-Hispanic Multiple Races   |
+| 7             | Hispanic              |
+| 8             | Origin unknown or not stated   |
+
+| **DMETH_REC** | **Label**             |
+| :---          | :---                  | 
+| 1             | Vaginal               |
+| 2             | C-Section             |
+| 9             | Unknown               |
 
 
-R has 5 basic classes of variables:
-1. logical (e.g., `TRUE`, `FALSE`): `as.logical()`
-2. integer: `as.integer()`
-3. numeric: `as.numeric()`
-4. character: `as.character()`
-5. complex: `as.complex()` - *not commonly used, but included for completeness*
+In R, that missing needs to be coded as a specific missing value that is consistent with it's class type. This might be:
+* `NA_character_` for character class type
+* `NA_integer_` for integer class type
+* `NA_real_` for numeric class type
+* `NA` for generic NA use
 
+Remember, in R everything needs to be assigned because it is an object-oriented language. To do this, we will make a new variable for each of the above using the appropriate class function. 
 
+Let's start with `MRACEHISP`, and use the `mutate()` function from the `dplyr` package to create a new variable named `MRACEHISP.na`.
 
-
-In our data, we will want to change the following variable class types so that R will recognize them in the way we plan to use them in our analysis:
-* `MAGER`: character --> integer
-* `MRACEHISP`: character --> factor
-* `DMETH_REC`: numeric --> factor
-* `OEGest_R3:` numeric --> factor
-
-Recall in R, everything needs to be assigned because it is an object-oriented language. To do this, we will make a new variable for each of the above using the appropriate class function.
-
-Let's start with `OEGest_R3`, and use the `mutate()` function from the `dplyr` package to create a new variable named `OEGest_R3.fact`.
-
-For factors, we can also assign the level names and the reference value.
-
+We will use the `ifelse()` function to change the missing value to the appropriate class NA value. 
 
 ```{r}
-births18to24_step6 <- births18to24_step5 %>%
-                        mutate(OEGest_R3.fact = factor(OEGest_R3,
-                                                          levels = c(2, 1), # list referent 1st
-                                                          labels = c("Term", "Preterm"))) # order must match the levels
+# check the class of MRACEHISP
+class(births20to24_step5$MRACEHISP)
 
-class(births18to24_step6$OEGest_R3.fact)
-levels(births18to24_step6$OEGest_R3.fact)
+# make new variable with NA_character_
+births20to24_step6 <- births20to24_step5 %>%
+                        mutate(MRACEHISP.na = ifelse(MRACEHISP == 8, NA_character_, MRACEHISP))
+# If MRACEHISP == 8, code as NA, otherwise keep the value of MRACEHISP
 
-table(births18to24_step6$OEGest_R3.fact, useNA = "always")
+### CODE CHECKS!
+# check the coding worked
+table(births20to24_step6$MRACEHISP.na, useNA = "always")
+
+# cross tab
+table(mracehisp = births20to24_step6$MRACEHISP,
+      mracehisp.na = births20to24_step6$MRACEHISP.na,
+      useNA = "always")
 ```
 
 
 ### Try it on your own!
 
-
-
-
-# 7. Creating Combined Variables
-
-
-
-
-
-# 8. Selecting Columns
-
-
-
-
-
-# 9. Pulling it all together with pipes
-
-example of steps 5-8 in one code chunk
+Create a new object `births20to24_step6.pt2` from `births20to24_step6` to create a new variable `DMETH_REC.na` using the `mutate()` and `ifelse()` functions and the appropriate NA class.
 
 ```{r}
+# check the class of DMETH_REC
+class(births20to24_step6$DMETH_REC)
+
+# make new variable with NA_real_
+births20to24_step6.pt2 <- births20to24_step6 %>%
+                            mutate(DMETH_REC.na = ifelse(DMETH_REC == 9, 
+                                                         NA_character_, 
+                                                         DMETH_REC))
+# If DMETH_REC == 9, code as NA, otherwise keep the value of DMETH_REC
+
+### CODE CHECKS!
+# check the coding worked
+table(births20to24_step6.pt2$DMETH_REC.na, useNA = "always")
+
+# cross tab
+table(dmeth_rec = births20to24_step6.pt2$DMETH_REC,
+      dmeth_rec.na = births20to24_step6.pt2$DMETH_REC.na,
+      useNA = "always")
+```
 
 
+## 7. Changing Variable Class Types
+
+Recall that R stores everything as an object, and each object has a class. Commonly used classes are:
+1. logical (e.g., `TRUE`, `FALSE`): `as.logical()`
+2. integer: `as.integer()`
+3. numeric: `as.numeric()`
+4. character: `as.character()`
+5. factor (e.g., categorical variables): `factor()`
+
+
+In our data, we will want to change the following variable class types so that R will recognize them in the way we plan to use them in our analysis:
+* `MAGER`: character --> integer
+* `MRACEHISP.na`: character --> factor
+* `DMETH_REC.na`: numeric --> factor
+* `OEGest_R3:` numeric --> factor
+
+Remember, in R everything needs to be assigned because it is an object-oriented language. To do this, we will make a new variable for each of the above using the appropriate class function.
+
+Let's start with `OEGest_R3`, and use the `mutate()` function from the `dplyr` package to create a new variable named `OEGest_R3.fact`.
+
+For factors, we can also assign the level names and the reference value.
+
+```{r}
+births20to24_step7 <- births20to24_step6.pt2 %>%
+                        mutate(OEGest_R3.fact = factor(OEGest_R3,
+                                                          levels = c(2, 1), # list referent 1st
+                                                          labels = c("Term", "Preterm"))) # order must match the levels
+
+class(births20to24_step7$OEGest_R3.fact)
+levels(births20to24_step7$OEGest_R3.fact)
+
+table(births20to24_step7$OEGest_R3.fact, useNA = "always")
+```
+
+
+### Try it on your own!
+
+Create a new object named `births20to24_step7.pt2` from `births20to24_step7` with a new variable for `MAGER`, `MRACEHISP.na`, and `DMETH_REC.na` with a name structure replacing the `.na` and now ending in `.fact` for factor type (i.e. `MRACEHISP.fact`) and `.int` for integer type (i.e. `MAGER.int`). Keep Non-Hispanic White and Vaginal as the reference values.
+
+The two factors variables currently have the following levels:
+
+| **MRACEHISP.na** | **Label**             |
+| :---             | :---                  | 
+| 1                | Non-Hispanic White    |
+| 2                | Non-Hispanic Black    |
+| 3                | Non-Hispanic American Indian and Alaska Native    |
+| 4                | Non-Hispanic Asian    |
+| 5                | Non-Hispanic Native Hawaiian and Other Pacific Islander   |
+| 6                | Non-Hispanic Multiple Races   |
+| 7                | Hispanic              |
+| 8                | Missing               |
+
+| **DMETH_REC.na** | **Label**             |
+| :---             | :---                  | 
+| 1                | Vaginal               |
+| 2                | C-Section             |
+| 9                | Missing               |
+
+
+**Hint:** you can create multiple new variables within a mutate statement by using a comma between them.
+
+    new_object <- old_object %>%
+                      mutate(
+                          var1 = oldvar1,
+                          var2 = oldvar2
+                 )
+
+```{r}
+births20to24_step7.pt2 <- births20to24_step7 %>%
+                           mutate(
+                             # MAGER as integer variable
+                             MAGER.int = as.integer(MAGER),
+                             # MRACEHISP.na as factor variable
+                             MRACEHISP.fact = factor(
+                                            MRACEHISP.na, # original variable
+                                            levels = c("1", "2", "3", "4", "5", "6", "7"), # list of values with quotes because character type. Does not include NA!
+                                            labels = c(
+                                              "Non-Hispanic White", 
+                                              "Non-Hispanic Black",
+                                              "Non-Hispanic American Indian and Alaska Native",
+                                              "Non-Hispanic Asian",
+                                              "Non-Hispanic Native Hawaiian and Other Pacific Islander",
+                                              "Non-Hispanic Multiple Races",
+                                              "Hispanic"
+                                            ) #labels matching order of levels
+                                          ),
+                             # DMETH_REC.na as factor variable
+                             DMETH_REC.fact = factor(
+                                              DMETH_REC.na, # original variable
+                                              levels = c(1, 2),
+                                              labels = c("Vaginal", "C-Section")
+                             )
+                           )
+
+```
+
+```{r}
+### CODE CHECKS! ###
+
+# Maternal Age ----
+class(births20to24_step7.pt2$MAGER.int)
+range(births20to24_step7.pt2$MAGER.int)
+## table(births20to24_step7.pt2$MAGER.int, useNA = "always") 
+
+# Race and Ethnicity ----
+class(births20to24_step7.pt2$MRACEHISP.fact)
+levels(births20to24_step7.pt2$MRACEHISP.fact)
+## table(births20to24_step7.pt2$MRACEHISP.fact, useNA = "always")
+
+# Delivery Method ----
+class(births20to24_step7.pt2$DMETH_REC.fact)
+levels(births20to24_step7.pt2$DMETH_REC.fact)
+## table(births20to24_step7.pt2$DMETH_REC.fact, useNA = "always")
+
+```
+
+### Try it on your own!
+
+Let's now remove `births20to24`, `births20to24_step5`, `births20to24_step6`, `births20to24_step6.pt2`, `births20to24_step7` from the environment to clean up our workspace a bit. 
+
+Only `births18to24` and `births20to24_step7.pt2` should remain in the environment.
+
+```{r}
+rm(births20to24, births20to24_step5, births20to24_step6, births20to24_step6.pt2, births20to24_step7)
+```
+
+
+## 8. Creating Combined Variables
+
+We've already covered the `ifelse()` equivalent for R when creating new variables with a single condition. When we have multi-condition variable creation, `case_when()` is a better fit.
+
+
+
+Any diabetes
+
+| **DIAB.recode**     | **RF_PDIAB & RF_GDIAB**           |
+| :---                | :---                              |
+| Yes                 | RF_PDIAB = Y or/and RF_GDIAB = Y  |
+| No                  | (RF_PDIAB = N and RF_GDIAB = N) OR (RF_PDIAB = N & RF_GDIAB = U) OR (RF_PDIAB = U & RF_GDIAB = N)     |
+| Missing             | RF_PDIAB = U and RF_GDIAB = U     |
+
+
+```{r}
+births20to24_step8 <- births20to24_step7.pt2 %>%
+                         mutate(
+                           DIAB.recode = case_when(
+                               RF_PDIAB == "Y" | RF_GDIAB == "Y" ~ "Yes", # condition ~ new variable value
+                               RF_PDIAB == "N" & RF_GDIAB == "N" ~ "No",
+                               RF_PDIAB == "U" & RF_GDIAB == "N" ~ "No",
+                               RF_PDIAB == "N" & RF_GDIAB == "U" ~ "No",
+                               RF_PDIAB == "U" & RF_GDIAB == "U" ~ NA_character_,
+                               TRUE ~ "check" # if none of the conditions are true, set the value to this
+                            ),
+                           DIAB.recode.fact = factor(
+                             DIAB.recode,
+                             levels = c("No", "Yes")
+                           )
+                         )
+
+### Data checks!
+class(births20to24_step8$DIAB.recode.fact)
+
+table(births20to24_step8$DIAB.recode.fact, useNA = "always")
+
+births20to24_step8 %>%
+    count(DIAB.recode.fact, RF_PDIAB, RF_GDIAB)
+
+```
+
+### Try it on your own!
+
+Create a new object named `births20to24_step8.pt2` from `births20to24_step8` to make the new recode variable for any hypertension and the 10-year age category variables using `mutate()` and `case_when()`. Don't forget to transform them into factor variables named `HYPE.recode.fact` and `MAGER.recode.fact`!
+
+
+Any hypertension
+
+| **HYPE.recode**     | **RF_PHYPE & RF_GHYPE & RF_EHYP**                    |
+| :---                | :---                              |
+| Yes                 | RF_PHYPE = Y or/and RF_GHYPE = Y or/and RF_EHYP = Y|
+| No                  | Any combination of U and N with at least one N     |
+| Missing             | RF_PHYPE = U and RF_GHYPE = U and EHYPE = U        |
+
+10-year age categories
+
+| **MAGER.recode**    | **MAGER.int**   |
+| :---                | :---            |
+| Under 15 Years      | 12-14           |
+| 15-24 Years         | 15-24           |
+| 25-34 Years         | 25-34           | 
+| 35-44 Years         | 35-44           |
+| 45+ Years           | 45-50           |
+
+**Hint:** In R, when listing sequential numbers you can list as `c(1,2,3)` or `c(1:3)`
+
+```{r}
+births20to24_step8.pt2 <- births20to24_step8 %>%
+                            mutate(
+                              # Any Hypertension
+                              HYPE.recode = case_when(
+                                RF_PHYPE == "Y" | RF_GHYPE == "Y" | RF_EHYP == "Y" ~ "Yes",
+                                RF_PHYPE == "N" & RF_GHYPE %in% c("N", "U") & RF_EHYP %in% c("N", "U") ~ "No",
+                                RF_PHYPE %in% c("N", "U") & RF_GHYPE == "N" & RF_EHYP %in% c("N", "U") ~ "No",
+                                RF_PHYPE %in% c("N", "U") & RF_GHYPE %in% c("N", "U") & RF_EHYP == "N" ~ "No",
+                                RF_PHYPE == "U" & RF_GHYPE == "U" & RF_EHYP == "U" ~ NA_character_,
+                                TRUE ~ "check"
+                              ),
+                              HYPE.recode.fact = factor(
+                                HYPE.recode,
+                                levels = c("No", "Yes")
+                              ),
+                              # Age Categories
+                              MAGER.recode = case_when(
+                                MAGER.int %in% c(12:14) ~ "Under 15 Years",
+                                MAGER.int %in% c(15:24) ~ "15-24 Years",
+                                MAGER.int %in% c(25:34) ~ "25-34 Years",
+                                MAGER.int %in% c(35:44) ~ "35-44 Years",
+                                MAGER.int %in% c(45:50) ~ "45+ Years"
+                              ),
+                              MAGER.recode.fact = factor(
+                                MAGER.recode,
+                                levels = c("Under 15 Years", "15-24 Years", "25-34 Years",
+                                           "35-44 Years", "45+ Years"
+                                           )
+                              )
+                            )
+
+```
+
+```{r}
+### Data checks! ###
+
+# Any Hypertension ---
+class(births20to24_step8.pt2$HYPE.recode.fact)
+
+table(births20to24_step8.pt2$HYPE.recode.fact, useNA = "always")
+
+births20to24_step8.pt2 %>%
+    count(HYPE.recode.fact, RF_PHYPE, RF_GHYPE, RF_EHYP)
+
+# Age Categories ---
+class(births20to24_step8.pt2$MAGER.recode.fact)
+
+table(births20to24_step8.pt2$MAGER.recode.fact, useNA = "always")
+
+births20to24_step8.pt2 %>%
+    count(MAGER.recode.fact, MAGER.int)
 
 ```
 
 
-# 10. Save data as cleaned R data file
+## 9. Selecting Columns
+
+Similar to other statistical programs, we can clean up our final analytic dataset by only keeping the variables we will be using moving forward.
+
+
 
 ```{r}
+keep_vars <- c("id", "DOB_YY", "OEGest_R3.fact", "MRACEHISP.fact", "MAGER.recode", "DIAB.recode", "HYPE.recode", "DMETH_REC.fact", "DBWT")
 
+births20to24_step9 <- births20to24_step8.pt2 %>%
+                        dplyr::select(all_of(keep_vars)) # You can think of `all_of()` as part of the list (select all of these variables in my list)
+
+# check variable names
+names(births20to24_step9)
+```
+
+### Try it on your own!
+
+Turns out we don't actually need `DBWT`. Let's create a new object named `births20to24.final` from `births20to24_step9` and drop `DBWT` using the drop variable method: (i.e. using a `-` before the variable list).
+
+
+```{r}
+drop_vars <- c("DBWT")
+
+births20to24.final <- births20to24_step9 %>%
+                        dplyr::select(-all_of(drop_vars))
 
 ```
 
+## 10. Pulling it all together with pipes
 
+Similar to other statistical programming languages, we do not need to have our code run step by step! We can use R pipes (`%>%) to stack our code all in one chunk.
+
+### Try it on your own! 
+
+Combine steps #5 through #8 using pipes to create a new object named `births20to24.final2` from `births18to24`. Recall that consecutive `mutate()` and `filter()` statements can be combined in the same `mutate()` and `filter()` statements with commas.
+
+```{r}
+# Define variables for selection in step 9
+keep_vars1 <- c("id", "DOB_YY", "OEGest_R3.fact", "MRACEHISP.fact", "MAGER.recode", "DIAB.recode", "HYPE.recode", "DMETH_REC.fact")
+
+# Create final data frame starting with births18to24
+births20to24.final2 <- births18to24 %>%
+                            # Step 5: Filter to 2020-2024 and valid preterm birth values ----
+                            filter(DOB_YY %in% c("2020", "2021", "2022", "2023", "2024"),
+                                   OEGest_R3 != 3
+                                   ) %>%
+                            # Step 6: Coding missing values  ----
+                            mutate(MRACEHISP.na = ifelse(MRACEHISP == 8, NA_character_, MRACEHISP),
+                                   DMETH_REC.na = ifelse(DMETH_REC == 9, NA_character_, DMETH_REC),
+                            # Step 7: Changing variable class types ----
+                                   # Preterm birth
+                                   OEGest_R3.fact = factor(OEGest_R3,
+                                                          levels = c(2, 1), # list referent 1st
+                                                          labels = c("Term", "Preterm")),
+                                   # Maternal Age
+                                   MAGER.int = as.integer(MAGER),
+                                   # Race/Ethnicity
+                                   MRACEHISP.fact = factor(
+                                                  MRACEHISP.na, # original variable
+                                                  levels = c("1", "2", "3", "4", "5", "6", "7"), 
+                                                  labels = c(
+                                                    "Non-Hispanic White", 
+                                                    "Non-Hispanic Black",
+                                                    "Non-Hispanic American Indian and Alaska Native",
+                                                    "Non-Hispanic Asian",
+                                                    "Non-Hispanic Native Hawaiian and Other Pacific Islander",
+                                                    "Non-Hispanic Multiple Races",
+                                                    "Hispanic"
+                                                  ) #labels matching order of levels
+                                                ),
+                                   # # Delivery method
+                                   DMETH_REC.fact = factor(
+                                                    DMETH_REC.na, # original variable
+                                                    levels = c(1, 2),
+                                                    labels = c("Vaginal", "C-Section")
+                                                ),
+                            # Step 8: Creating combined variables ----
+                                    # Diabetes Recode 
+                                    DIAB.recode = case_when(
+                                       RF_PDIAB == "Y" | RF_GDIAB == "Y" ~ "Yes", # condition ~ new variable value
+                                       RF_PDIAB == "N" & RF_GDIAB == "N" ~ "No",
+                                       RF_PDIAB == "U" & RF_GDIAB == "N" ~ "No",
+                                       RF_PDIAB == "N" & RF_GDIAB == "U" ~ "No",
+                                       RF_PDIAB == "U" & RF_GDIAB == "U" ~ NA_character_,
+                                       TRUE ~ "check" # if none of the conditions are true, set the value to this
+                                    ),
+                                     DIAB.recode.fact = factor(
+                                       DIAB.recode,
+                                       levels = c("No", "Yes")
+                                     ),
+                                    # Hypertension Recode
+                                      HYPE.recode = case_when(
+                                          RF_PHYPE == "Y" | RF_GHYPE == "Y" | RF_EHYP == "Y" ~ "Yes",
+                                          RF_PHYPE == "N" & RF_GHYPE %in% c("N", "U") & RF_EHYP %in% c("N", "U") ~ "No",
+                                          RF_PHYPE %in% c("N", "U") & RF_GHYPE == "N" & RF_EHYP %in% c("N", "U") ~ "No",
+                                          RF_PHYPE %in% c("N", "U") & RF_GHYPE %in% c("N", "U") & RF_EHYP == "N" ~ "No",
+                                          RF_PHYPE == "U" & RF_GHYPE == "U" & RF_EHYP == "U" ~ NA_character_,
+                                          TRUE ~ "check"
+                                        ),
+                                        HYPE.recode.fact = factor(
+                                          HYPE.recode,
+                                          levels = c("No", "Yes")
+                                        ),
+                                      # Age Categories
+                                        MAGER.recode = case_when(
+                                          MAGER.int %in% c(12:14) ~ "Under 15 Years",
+                                          MAGER.int %in% c(15:24) ~ "15-24 Years",
+                                          MAGER.int %in% c(25:34) ~ "25-34 Years",
+                                          MAGER.int %in% c(35:44) ~ "35-44 Years",
+                                          MAGER.int %in% c(45:50) ~ "45+ Years"
+                                        ),
+                                        MAGER.recode.fact = factor(
+                                          MAGER.recode,
+                                          levels = c("Under 15 Years", "15-24 Years", "25-34 Years",
+                                                     "35-44 Years", "45+ Years"
+                                                     )
+                                        )
+                                ) %>%
+                              # Step 9: Select Variables 
+                              dplyr::select(all_of(keep_vars1))
+
+```
+
+Note we could have piped even earlier (from joins and row binds!) had we not cleared out our environment. If you're interested, try on your own and reach out if you have any difficulties!
+
+## 11. Save data as cleaned R data file
+
+Congrats on having finished your R analytic data set cleaning! For easier use in the future, let's save our clean analytic dataset as an R data file.
+
+```{r, eval = FALSE}
+save(births20to24.final, file = "births20to24_final.RData")
+
+```
+
+Before closing out, click the little broom button in the top right environment tab to empty your environment.
+
+# Part 2. 
 
 kable() test - use this for table formatting: https://rmarkdown.rstudio.com/articles_docx.html
 
