@@ -119,11 +119,11 @@ rm(ter.births.18, ter.births.20, ter.births.21, ter.births.22, ter.births.23, co
 ## with separate sheets for demographic + clinical
 rio::export(list(demographic = territory.births.18_23.demographics,
                  clinical = territory.births.18_23.clinical),
-            "training_data_files/territory_births_18to23.xlsx")
+            "training_data_files/raw/territory_births_18to23.xlsx")
 
 rio::export(list(demographic = territory.births.24.demographics,
                  clinical = territory.births.24.clinical),
-            "training_data_files/territory_births_24.xlsx")
+            "training_data_files/raw/territory_births_24.xlsx")
 
 
 rm(territory.births.24.demographics, territory.births.24.clinical, territory.births.18_23.demographics,

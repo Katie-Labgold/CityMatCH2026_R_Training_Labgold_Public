@@ -10,7 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-pacman::p_load(rio, dplyr) # we list the packages we need here
+pacman::p_load(rio, here, dplyr, tidyr) # we list the packages we need here
 ```
 
 # Overview
@@ -39,10 +39,12 @@ In this example we'll be loading in two excel files, each with two sheets. Let's
 We will need to pull in each sheet separately: `demographic` and `clinical`
 
 ```{r}
-demographic.18to23 <- rio::import("training_data_files/territory_births_18to23.xlsx", # excel file path
+demographic.18to23 <- rio::import(
+            here("training_data_files", "raw", "territory_births_18to23.xlsx"), # excel file path
                            which = "demographic") # sheet name
 
-clinical.18to23 <- rio::import("training_data_files/territory_births_18to23.xlsx",  # excel file path
+clinical.18to23 <- rio::import(
+            here("training_data_files", "raw", "territory_births_18to23.xlsx"),  # excel file path
                            which = "clinical") # sheet name
 ```
 
@@ -53,9 +55,13 @@ We should now see two objects for the datasets we loaded in our Environment wind
 Create two objects, one named `demographic.24` that pulls in the 2024 births data demographic variables sheet, and `clinical.24` that pulls in the 2024 births data clinical variables sheet.
 
 ```{r}
-demographic.24 <- rio::import("training_data_files/territory_births_24.xlsx", which = "demographic")
+demographic.24 <- rio::import(
+              here("training_data_files", "raw", "territory_births_24.xlsx"),
+              which = "demographic")
 
-clinical.24 <- rio::import("training_data_files/territory_births_24.xlsx", which = "clinical")
+clinical.24 <- rio::import(
+              here("training_data_files", "raw", "territory_births_24.xlsx"), 
+                           which = "clinical")
 ```
 
 
@@ -749,16 +755,236 @@ Note we could have piped even earlier (from joins and row binds!) had we not cle
 
 ## 11. Save data as cleaned R data file
 
-Congrats on having finished your R analytic data set cleaning! For easier use in the future, let's save our clean analytic dataset as an R data file.
+Congrats on having finished your R analytic data set cleaning! For easier use in the future, let's save our clean analytic dataset as an R data file in the `training_data_files` folder.
 
 ```{r, eval = FALSE}
-save(births20to24.final, file = "births20to24_final.RData")
+save(births20to24.final, 
+     file = here("training_data_files", "clean", "births20to24_final.RData")
+)
 
 ```
 
 Before closing out, click the little broom button in the top right environment tab to empty your environment.
 
-# Part 2. 
+# Break!
+
+# Part 2. Report Summaries
+
+At this point we have our clean analytic dataset, but the easiest way to work in R for creating summaries (think: calculating rates/prevalences, counts by group, etc.) for tables and figures is to make individual data frames.
+
+In this section we'll prepare separate data frames for the following tasks:
+1. 2020-2024 aggregated count of preterm and live births
+2. Preterm birth and live birth counts by year
+3. Preterm birth rates by year
+4. Preterm birth rates by maternal age and race/ethnicity
+5. Preterm birth rates by diabetes history and hypertension history, stratified by XXXX
+
+## 0. Load clean analytic data
+
+```{r}
+load(here("training_data_files", "clean", "births20to24_final.RData"))
+```
+
+This should match our created file: 114,618 observations with 8 variables!
+
+## 1. Count of preterm births and live births aggregated across all years
+
+Notice that I can create a variable name with a space, but when doing this need to use ``.
+
+```{r}
+count20_24 <- births20to24.final %>%
+                summarise(
+                  `Preterm Births` = sum(OEGest_R3.fact == "Preterm"), # sum up the rows with "Preterm"
+                  `Live Births` = n(), # n() gives us the count of all rows
+                )
+
+knitr::kable(count20_24) # View table
+
+# Data check! Confirm output:
+nrow(births20to24.final) # matches total n
+table(births20to24.final$OEGest_R3.fact) # matched PTB count
+```
+
+## 2. Preterm birth and live birth counts by year
+
+We can adapt the code above to give us one row of counts per year. In R, we can do this by piping (`%>%`) `group_by(variable_name)` before the function you want to group by. Try adapting the code above to group by `DOB_YY`.
+
+### Try it on your own!
+
+Name your new object `year.count20_24`.
+
+```{r}
+year.count20_24 <- births20to24.final %>%
+                    group_by(DOB_YY) %>% # Group by Year
+                    summarise(
+                      `Preterm Births` = sum(OEGest_R3.fact == "Preterm"), # sum up the rows with "Preterm"
+                      `Live Births` = n(), # n() gives us the count of all rows
+                    ) %>%
+                    ungroup() # ungroup()
+
+```
+
+**Important:** the `group_by()` function is *sticky* and cannot be visualized in your data frame. What this means it is lingers on for future tasks unless you add the `ungroup()` function after the tasks you wanted to group by to tell R "we are done grouping by this variable!". 
+
+Before we switch over to building our table, it might be nice to have a table that has the top row with the aggregated count, and then each year below it.
+
+### Try it on your own!
+
+Using functions we've covered earlier today, create a new object named `counts.table` - a 6 row table with aggregated year count as the first row, and 2020-2024 below it:
+
+* Set the value of `DOB_YY` to `Overall 2020-2024` for the aggregate row
+* Use the `rename("new_name" = "old_name")` function to rename `DOB_YY` to `Birth Year`
+* Use the `relocate(variable)` function to ensure `Birth Year` is the first column
+
+```{r}
+counts.table <- count20_24 %>% # Start with aggregate df to ensure 1st row
+                  bind_rows(year.count20_24) %>% # Bind rows from yearly count table
+                  mutate(DOB_YY = ifelse(is.na(DOB_YY), "Overall 2020-2024", DOB_YY)) %>% # if DOB_YY is missing, code as new value, otherwise keep old value
+                  rename("Birth Year" = "DOB_YY") %>% # rename DOB_YY to Birth Year
+                  relocate(`Birth Year`) # move `Birth Year` to be 1st column (note the ``!)
+```
+
+
+
+# 3. Preterm Birth Rates by Year
+
+We are going to create a time trend figure of preterm birth rates per 1,000 live births by year. So next step: calculate our rates!
+
+### Try it on your own!
+
+Using functions we've already covered, create a new object named `year.rate20_24` from `counts.table` with a new variable named `preterm_rate_per100` that is the number of preterm births, divided by the live births, and multiplied by 100.
+
+**Hint:** arithmetic functions work very similarly to your usual stats package languages.
+
+```{r}
+year.rate20_24 <- counts.table %>%
+                    mutate( # mutate because we are making a new variable from an old variable 
+                      preterm_rate_per100 = (`Preterm Births`/`Live Births`)*100
+                      )
+
+knitr::kable(year.rate20_24)
+
+```
+
+We can see that the new preterm birth rate variable goes to 5 decimal places! Let's adapt the code above to clean it up using the `round(variable, number of decimals)` function wrapped around the current calculation.
+
+```{r}
+year.rate20_24 <- counts.table %>%
+                    mutate( # mutate because we are making a new variable from an old variable 
+                      preterm_rate_per100 = round((`Preterm Births`/`Live Births`)*100, 1)
+                      )
+
+knitr::kable(year.rate20_24) # 1 decimal place for the rate - much better!
+
+```
+
+
+## Save tables for the report
+
+We will use `counts.table` for the counts table and `year.rate20_24` for the preterm birth rate time trend. To make these easily accessible in our report document, let's save them to our `clean` data folder. 
+
+### Try it on your own!
+
+Let's save these two data frames as a .RData file in the `clean` data folder within the `training_data_files` folder with the name `births20to24_basicsummary.RData`.
+
+**Hint:** You should store both data frames in the same .RData file. Unfortunately the help documentation isn't great for this function, so try a quick google search if you get stuck!
+
+```{r, eval = F}
+save(counts.table, year.rate20_24, # we can list multiple files 
+     file = here("training_data_files", "clean", "births20to24_basicsummary.RData")
+)
+```
+
+
+
+## Sweep your environment, and let's hop over to the `report.rmd` doc!
+
+
+# 4. Preterm Birth Rates by Maternal Age and Race/Ethnicity
+
+Let's start by reloading our clean analytic dataset.
+
+```{r}
+load(here("training_data_files", "clean", "births20to24_final.RData"))
+```
+
+Our output goal is bar chart of 2020-2024 5-year preterm birth rates stratified by maternal age and race/ethnicity. We'll design the figure so that the bar charts for each variable are side by side.
+
+To do this, we'll need to put our data that is currently in *wide* format into *long* format (also known as *tidydata* in the R universe). Thankfully the `tidyr` package has the helpful function `pivot_longer()`:
+
+```{r}
+age.raceeth_long <- births20to24.final %>%
+                  dplyr::select(all_of(c("OEGest_R3.fact", "MRACEHISP.fact", "MAGER.recode"))) %>% # subset data to make it easier for us later
+                  pivot_longer(
+                    cols = c(MRACEHISP.fact, MAGER.recode), # columns to make long
+                    names_to = "Variable", # Name for the column of variable names
+                    values_to = "Value" # Name for values of each variable
+                  )
+
+# Data checks
+head(age.raceeth_long) 
+nrow(births20to24.final)*2 # double because two variables now stacked as rows
+```
+
+### Try it on your own!
+
+Create a new object named `age.raceeth.rates` from `age.raceeth_long` to calculate the preterm birth rates for each variable's categories using the functions we've already covered. Use the same variable names we created previously (i.e., `Preterm Births`, `Live Births`, and `preterm_rate_per100`).
+
+**Hint:** You'll need to group by two variables to first calculate the preterm birth and live birth counts.
+
+When you're done, save your new data frame as `age_raceeth_rates.RData`
+
+```{r}
+age.raceeth.rates <- age.raceeth_long %>%
+                      group_by(Variable, Value) %>%
+                      summarise(
+                        `Preterm Births` = sum(OEGest_R3.fact == "Preterm"),
+                        `Live Births` = n()
+                      ) %>%
+                      ungroup() %>% # don't forget to ungroup!
+                      mutate(
+                        preterm_rate_per100 = round((`Preterm Births`/`Live Births`)*100, 1)
+                      )
+
+```
+
+Before we save, we'll need to reset our factor levels.
+
+```{r}
+age.raceeth.rates <- age.raceeth.rates %>%
+                      group_by(Variable) %>%
+                      mutate(Value = factor(Value,
+                                            levels = c(
+                                              # first maternal age levels in REVERSE order you want to show in figure
+                                              "45+ Years","35-44 Years","25-34 Years", "15-24 Years", "Under 15 Years",  
+                                               
+                                              # then race/ethnicity levels in REVERSE order you want to show in figure (here, alphabetical)
+                                              "Non-Hispanic White", 
+                                              "Non-Hispanic Native Hawaiian and Other Pacific Islander",
+                                              "Non-Hispanic Multiple Races", "Non-Hispanic Black",
+                                              "Non-Hispanic Asian", 
+                                              "Non-Hispanic American Indian and Alaska Native", "Hispanic"
+                                            )
+                                            )
+                             )
+# Data Checks
+class(age.raceeth.rates$Value)
+levels(age.raceeth.rates$Value)
+```
+
+```{r, eval = F}
+save(age.raceeth.rates, # we can list multiple files 
+     file = here("training_data_files", "clean", "age_raceeth_rates.RData")
+)
+```
+
+## Sweep your environment, and let's hop over to the `report.rmd` doc!
+
+# 5.
+
+
+# HOLD BELOW
+
 
 kable() test - use this for table formatting: https://rmarkdown.rstudio.com/articles_docx.html
 
