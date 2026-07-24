@@ -1,11 +1,10 @@
 ---
-title: "Data Preparation for 2020-2024 Preterm Births in US Territories Report" 
-subtitle: "[COMPLETE EXAMPLE]"
-author: "K Labgold"
-date: "`r Sys.Date()`"
+title: "Data Preparation for 2020-2024 Preterm Births in US Territories Report [COMPLETE EXAMPLE]" 
+subtitle: "Prepared by Dr. Katie Labgold"
+date: "Last updated: `r format(Sys.Date(), '%m/%d/%Y')`"
 output:
   word_document: 
-    reference_docx: "mod_reference_template_v2.docx"
+    reference_docx: "report_style_template.docx"
 ---
 
 ```{r setup, include=FALSE}
@@ -15,9 +14,11 @@ pacman::p_load(rio, here, dplyr, tidyr) # we list the packages we need here
 
 # Overview
 
-Our objective is to create a report on preterm births for US territories during 2020-2024 using the publicly available live births data from XXXX.
+Our objective is to create a report on preterm births for US territories during 2020-2024 using the publicly available births data from (CDC NCHS)[https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm].
 
-This document is split into X parts.
+This document is split into 2 parts:
+1. Preparing the analytic data set
+2. Preparing the report summaries
 
 # Part 1. Preparing our analytic data set
 
