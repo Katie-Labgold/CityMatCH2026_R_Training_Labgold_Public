@@ -777,7 +777,7 @@ In this section we'll prepare separate data frames for the following tasks:
 2. Preterm birth and live birth counts by year
 3. Preterm birth rates by year
 4. Preterm birth rates by maternal age and race/ethnicity
-5. Preterm birth rates by diabetes history and hypertension history, stratified by XXXX
+5. Preterm birth rates by diabetes history and hypertension history
 
 ## 0. Load clean analytic data
 
@@ -948,7 +948,7 @@ age.raceeth.rates <- age.raceeth_long %>%
 
 ```
 
-Before we save, we'll need to reset our factor levels.
+Before we save, we'll need to reset our factor levels. In our figure, we will have the bars of the bar chart oriented horizontally, and so we will need to put our levels in reverse order that we want to see them in. If the bars were upright, then the levels can be in the order to visualize.
 
 ```{r}
 age.raceeth.rates <- age.raceeth.rates %>%
@@ -980,15 +980,71 @@ save(age.raceeth.rates, # we can list multiple files
 
 ## Sweep your environment, and let's hop over to the `report.rmd` doc!
 
-# 5.
+# 5. Preterm Birth Rates by Hypertension History and Diabetes History
 
+### Try it on your own!
 
-# HOLD BELOW
+We now want to prepare our data to make a similar figure as we just made for maternal age and race/ethnicity. Using code we've already covered:
 
+  1. Load our clean analytic dataset
+  2. Create a new object named `hype.diab.rates` from our clean analytic dataset
+  3. This new data frame should be in long format with new variables named `Comorbidity` for the variable names and `Reported` for the value names
+  4. `Reported` should be a factor with levels in the order that would have "Yes" be the first value in our figure
+  5. Calculate `Preterm Births`, `Live Births`, and `preterm_rate_per100`
+  6. Remove missing levels of `HYPE.recode` and `DIAB.recode`
+  7. Save as a .RData file named `hype_diab_rates.RData`
+  8. Move over to the report.rmd file and complete the hypertension and diabetes section (i.e., header, summary, and make a figure). 
+    + Make this figure a bar chart showing both variables, with bars going upright (not flipped horizontally like the last example).
+    + Sweep your environment before moving over to the report.rmd
+    + Don't forget to add the load dataset code to the setup R code chunk! 
 
-kable() test - use this for table formatting: https://rmarkdown.rstudio.com/articles_docx.html
+```{r eval = F}
+# Load our clean analytic dataset
+load(here("training_data_files", "clean", "births20to24_final.RData"))
+```
 
 ```{r}
-knitr::kable(table(births18to24$DOB_YY))
+hype.diab.rates <- births20to24.final %>%
+             ##---- Prepare Long Data Format ----##
+                    # select variables for ease with long data
+                    dplyr::select(c("OEGest_R3.fact", "DIAB.recode", "HYPE.recode")) %>%
+                    # transform from wide to long format
+                    tidyr::pivot_longer(
+                      cols = c(DIAB.recode, HYPE.recode), # columns to make long
+                      names_to = "Comorbidity", # Name for the column of variable names
+                      values_to = "Reported" # Name for values of each variable
+                    ) %>%
+                    # make `Reported` a factor
+                    mutate(
+                      Reported = factor(Reported,
+                                        levels = c("Yes", "No")) #upright bars, so can put in order to visualize 
+                    ) %>%
+              ##---- Calculate Rates ----##
+                    # group by the comorbidity and reported columns
+                    group_by(Comorbidity, Reported) %>%
+                    # summarise to get the number of preterm births and live births by group
+                    summarise(
+                        `Preterm Births` = sum(OEGest_R3.fact == "Preterm"),
+                        `Live Births` = n()
+                      ) %>%
+                    ungroup() %>% # don't forget to ungroup!
+                    # calculate the preterm birth rate
+                    mutate(
+                        preterm_rate_per100 = round((`Preterm Births`/`Live Births`)*100, 1)
+                      ) %>%
+                    # filter our missing values of hypertension and diabetes
+                    filter(
+                      !is.na(Reported)
+                    )
+
+## Data Checks
+head(hype.diab.rates)
+levels(hype.diab.rates$Reported)
 ```
+
+```{r, eval = F}
+save(hype.diab.rates,
+     file = here("training_data_files", "clean", "hype_diab_rates.RData"))
+```
+
 
