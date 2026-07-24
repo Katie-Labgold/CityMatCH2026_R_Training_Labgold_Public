@@ -56,9 +56,10 @@ year.rate20_24 %>%
   set_caption(caption = "Table 1: Preterm Birth Rates by Year") %>%
   width(j = c("Birth Year", "Preterm Births", "Live Births", "Preterm Births per 100 Live Births"),
         width = c(1.5, 1.2, 1.2, 2)) %>%
+  paginate(init = TRUE) %>% # keeps the rows together (not splitting between pages in word)
   ### TRY ON YOUR OWN!!!
   ## try on your own! center the columns
-  align(align = "center", part = "all")
+  align(align = "center", part = "all") 
   
 ## take a minute to play around with some of the flextable options
 ## or try it on your own - look through the documentation to add XXXXX?

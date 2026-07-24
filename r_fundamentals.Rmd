@@ -17,7 +17,8 @@ https://resbaz.github.io/2014-r-materials/lessons/01-intro_r/data-structures.htm
 (3) R script vs markdown
 (4) Object-oriented language
 (5) packages - how to install, load, and use the help feature
-(6) Piping 
-(7) commenting in R
+(6) Capitalization and quotes
+(7) Piping 
+(8) commenting in R
 
 **introduce the cheat sheet
