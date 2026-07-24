@@ -1,10 +1,10 @@
 ---
 title: "U.S. Territory Preterm Births during 2020-2023 [COMPLETE EXAMPLE]"
-author: "K Labgold"
-date: "`r Sys.Date()`"
+subtitle: "Prepared by Dr. Katie Labgold"
+date: "Last updated: `r format(Sys.Date(), '%m/%d/%Y')`"
 output:
   word_document: 
-    reference_docx: "mod_reference_template.docx"
+    reference_docx: "report_style_template.docx"
 ---
 
 ```{r setup, include=FALSE}
@@ -17,24 +17,30 @@ pacman::p_load(here, dplyr, flextable, ggplot2)
 # After Part 2, Step #3 of data_prep.rmd, load `births20to24_basicsummary`
 load(here("training_data_files", "clean", "births20to24_basicsummary.rdata"))
 
-# After Part 2, Step #4 of data_prep.rmd, load `age_raceeth_rates`
+# After Part 2, Step #4 of data_prep.rmd, load `age.raceeth.rates`
 load(here("training_data_files", "clean", "age_raceeth_rates.rdata"))
 
-# After Part 3, Step #5 of data_prep.rmd, load XXXXX
+# After Part 3, Step #5 of data_prep.rmd, load `hype.diab.rates`
+load(here("training_data_files", "clean", "hype_diab_rates.rdata"))
+
 ```
 
 ## Key Findings
 
-  + The number of live births in US Territories increased from `r year.rate20_24[2, 3]` births in 2020 to `r year.rate20_24[2, 3]` births in 2020.  
-  + The preterm birth rate was `r year.rate20_24[6,4]` preterm births per 100 live births in 2024, up from `r year.rate20_24[2,4]` preterm births per 100 live births in 2020.  
-  + X age group had the highest preterm birth rate during 2020-2024  
-  + Race/ethnicity  
-  + Preterm birth was higher among xxx smoking, xxx diabetes, xxx hypertension. 
+  + The number of live births in US Territories increased from `r year.rate20_24[2, 3]` births in 2020 to `r year.rate20_24[6, 3]` births in 2024.  
+  
+  + The preterm birth rate was `r year.rate20_24[6,4]` preterm births per 100 live births in 2024, up from `r year.rate20_24[6,4]` preterm births per 100 live births in 2020.
+  
+  + Mothers ages `r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_max(preterm_rate_per100) %>% pull(Value)` had the highest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_max(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births), while mothers ages `r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_min(preterm_rate_per100) %>% pull(Value)` had the lowest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_min(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births).
+  
+  + Mothers reported to be of `r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_max(preterm_rate_per100) %>% pull(Value)` race and ethnicity had the highest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_max(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births), while mothers reported to be of `r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_min(preterm_rate_per100) %>% pull(Value)` race and ethnicity had the lowest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_min(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births). 
+  
+  + The preterm birth rate was higher for mothers with any diabetes and any hypertension, with a rate `r hype.diab.rates %>% filter(Comorbidity == "DIAB.recode") %>% summarise(round(preterm_rate_per100[Reported == "Yes"]/preterm_rate_per100[Reported == "No"], 1)) %>% pull()` and `r hype.diab.rates %>% filter(Comorbidity == "HYPE.recode") %>% summarise(round(preterm_rate_per100[Reported == "Yes"]/preterm_rate_per100[Reported == "No"], 1)) %>% pull()` times the rate for no diabetes and no hypertension, respectively. 
     
 
 ## The number of births increased from 2020 to 2024
 
-The number of live births in US Territories increased from `r year.rate20_24[2, 3]` births in 2020 to `r year.rate20_24[2, 3]` births in 2020.
+The number of live births in US Territories increased from `r year.rate20_24[2, 3]` births in 2020 to `r year.rate20_24[6, 3]` births in 2024.
 
 ```{r, echo = F}
 # Start by renaming our preterm birth rate variable to `Preterm Birth Rate Per 100 Live Births`
@@ -63,11 +69,9 @@ year.rate20_24 %>%
 
 ## The preterm birth rate increased during 2020 to 2024
 
-TRY IT: {INSERT text description}
-
 The preterm birth rate was `r year.rate20_24[6,4]` preterm births per 100 live births in 2024, up from `r year.rate20_24[2,4]` preterm births per 100 live births in 2020.
 
-The 5-year preterm birth rate for 2020-2024 was `r year.rate20_24[1,6]` preterm births per 100 live births.
+The 5-year preterm birth rate for 2020-2024 was `r year.rate20_24[6,1]` preterm births per 100 live births.
 
 ```{r fig.width = 7, fig.height = 5, dpi=500, include = F}
 # Start with this
@@ -126,11 +130,11 @@ plot2 +
 
 ```
 
-## {INSERT: Age and race/ethnicity summary}
+## Preterm birth rates varied by maternal age and maternal race and ethnicity
 
-bar chart: preterm birth rate by age
+Mothers ages `r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_max(preterm_rate_per100) %>% pull(Value)` had the highest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_max(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births), while mothers ages `r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_min(preterm_rate_per100) %>% pull(Value)` had the lowest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_min(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births).
 
-TRY IT: {INSERT text description}
+Mothers reported to be of `r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_max(preterm_rate_per100) %>% pull(Value)` race and ethnicity had the highest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_max(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births), while mothers reported to be of `r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_min(preterm_rate_per100) %>% pull(Value)` race and ethnicity had the lowest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_min(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births). 
 
 ```{r include = F}
 # starting just with one variable (maternal age)
@@ -146,7 +150,7 @@ age.raceeth.rates %>%
             theme_minimal()
 
 # let's make the same adjustments from last time 
-## Change color & add bar border
+## Change color & add bar border: color resource: https://r-charts.com/colors/
 ## bold text
 age.raceeth.rates %>%
       filter(Variable == "MAGER.recode") %>%
@@ -201,9 +205,7 @@ age.raceeth.rates %>%
             geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
             labs(
               x = NULL,
-              y = "Rate per 100 Live Births",
-              fill = "Maternal Age"
-            ) +
+              y = "Rate per 100 Live Births") +
             theme_minimal() +
             ylim(0, 30) +
             theme(
@@ -244,9 +246,9 @@ age.raceeth.rates %>%
       ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
             geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
             labs(
+              title = "Figure 2. Preterm Birth Rate per 100 Live Births\nby Maternal Age and Maternal Race and Ethnicity, U.S. Territories, 2020-2024",
               x = NULL,
-              y = "Rate per 100 Live Births",
-              fill = "Maternal Age"
+              y = "Rate per 100 Live Births"
             ) +
             theme_minimal() +
             ylim(0, 30) +
@@ -276,26 +278,109 @@ age.raceeth.rates %>%
                        ) +
             theme(
               strip.placement = "outside",
-              strip.text = element_text(face = "bold", size = 14)
+              strip.text = element_text(face = "bold", size = 14),
+              plot.title.position = "plot", # this line
+              plot.title = element_text(hjust = 0) # and this line tell R to push the plot title all the way to the left. Try removing it to see the difference.
             )
 ```
 
 
+## Preterm birth rates were highest for mothers with any diabetes and any hypertension history
+
+The preterm birth rate was higher for mothers with any diabetes and any hypertension, with a rate `r hype.diab.rates %>% filter(Comorbidity == "DIAB.recode") %>% summarise(round(preterm_rate_per100[Reported == "Yes"]/preterm_rate_per100[Reported == "No"], 1)) %>% pull()` and `r hype.diab.rates %>% filter(Comorbidity == "HYPE.recode") %>% summarise(round(preterm_rate_per100[Reported == "Yes"]/preterm_rate_per100[Reported == "No"], 1)) %>% pull()` times the rate for no diabetes and no hypertension, respectively. 
+
+```{r include = F}
+## Alternative to facets. In my opinion, this works best when the variables share the same values so you can rely on one legend!
+
+hype.diab.rates %>%
+      ggplot(aes(x = Comorbidity, y = preterm_rate_per100, group = Reported, fill = Reported)) +
+            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
+            labs(
+              x = NULL,
+              y = "Rate per 100 Live Births"
+            ) +
+            theme_minimal() +
+            ylim(0, 30) +
+            theme(
+                axis.text = element_text(face = "bold", size = 10),
+                axis.title = element_text(face = "bold", size = 12),
+                legend.position = "top" # drop legend
+                  ) +
+            scale_fill_manual(values = c("navyblue", "navyblue")) +
+            geom_text(
+                aes(label = preterm_rate_per100),
+                position = position_dodge(width = 0.9),
+                vjust = -1,
+                size = 4,
+                fontface = "bold"
+              ) 
 
 
-## {diabetes, hypertension summary}
+```
 
-side by side bar chart: preterm birth rate by smoking, diabetes, hypertension
+```{r fig.width = 7, fig.height = 4, dpi=500, echo = F, warning = F}
+### TRY IT ON YOUR OWN -- adapt the code above to:
+## 1. Make pretty labels for the comorbidity variables: "Any Hypertension" and "Any Diabetes"
+## 2. Change the colors so that "Yes" is purple and "No is grey
+## 3. Add a figure title
+## 4. Change legend position to the right side of the figure
 
-? any interest in faceting?
+hype.diab.rates %>%
+      # Create a pretty label for the Variable values
+      mutate(
+        Comorbidity = case_when(
+          Comorbidity == "HYPE.recode" ~ "Any Hypertension",
+          Comorbidity == "DIAB.recode" ~ "Any Diabetes"
+        )
+      ) %>%
+      ggplot(aes(x = Comorbidity, y = preterm_rate_per100, group = Reported, fill = Reported)) +
+            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
+            labs(
+              title = "Figure 3. Preterm Birth Rate per 100 Live Births \nby Any Hypertension and Any Diabetes, U.S. Territories, 2020-2024", # add a title
+              x = NULL,
+              y = "Rate per 100 Live Births"
+            ) +
+            theme_minimal() +
+            ylim(0, 30) +
+            theme(
+                axis.text = element_text(face = "bold", size = 10),
+                axis.title = element_text(face = "bold", size = 12),
+                legend.position = "right" # move legend to the right
+                  ) +
+            scale_fill_manual(values = c("mediumpurple", "grey50")) + # change colors of bars
+            geom_text(
+                aes(label = preterm_rate_per100),
+                position = position_dodge(width = 0.9),
+                vjust = -1,
+                size = 4,
+                fontface = "bold"
+              ) 
+```
 
 ## Recommendations
 
-**try making a figure with icons to insert?
+The following recommendations have been identified from these findings:
 
+```{r, echo = F, out.width = "55%"}
+knitr::include_graphics("recommendations.png")
+```
+
+
+### (1) Continued research 
+Continued analysis is needed to understand the unique drivers of higher preterm birth rates among certain maternal age and race and ethnicity categories in US Territories, which have distinct social and medical environments.
+
+### (2) Community engagement
+Working with community members to identify culturally relevant opportunities to address hypertension and diabetes.
+
+### (3) Partnering with providers
+Working with providers through territorial Perinatal Quality Collaboratives and other local collaborative organizations to identify culturally relevant opportunities to address hypertension and diabetes.
 
 ## Data Source and Methods
 
-Include link to where data was pulled
+Data for the analysis was downloaded from the [CDC NCHS publicly available vital statistics birth data files](https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm) for US Territories during 2020-2024. Consult the *User's Guide* files for more details on the data source. 
 
-For more information, see documentation available on our [GitHub page](https://github.com/Katie-Labgold).
+Preterm birth rates per calculated as the number of preterm births per 100 live births. Births were excluded if there was no information available on gestational age, based on the variable `OEGest_R3`. 
+
+Age was categorized in 10-year age groups based on the `MAGER` variable. Any diabetes and any hypertension were categorized based on having reported either pre-pregnancy or gestational diabetes and hypertension, respectively. 
+
+Additional details on the preparation of data for this report can be viewed in documentation available on our [GitHub page](https://github.com/Katie-Labgold).
