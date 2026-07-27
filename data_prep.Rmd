@@ -9,7 +9,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-pacman::p_load(rio, here, dplyr, tidyr) # we list the packages we need here
+library(rio)
+library(here)
+library(dplyr)
+library(tidyr)
 ```
 
 # Overview
@@ -24,14 +27,14 @@ This document is split into 2 parts:
 
 Part 1 will cover the R syntax for your standard operations of: 
 
-- Load Data 
-- Explore data using basic summaries 
-- Join datasets together based on a shared column id 
-- Row bind datasets together 
-- Subset to only necessary columns 
-- Filter to specific conditions 
-- Create variables of different types (i.e., character, numeric, factor, etc.) 
-- Create new variables from existing variables 
+- Loading Data 
+- Exploring data using basic summaries 
+- Joining datasets together based on a shared column id 
+- Row binding datasets together 
+- Subsetting to only necessary columns 
+- Filtering to specific conditions 
+- Creating variables of different types (i.e., character, numeric, factor, etc.) 
+- Creating new variables from existing variables 
 
 ## 1. Load Initial Datasets
 
@@ -49,7 +52,7 @@ clinical.18to23 <- rio::import(
                            which = "clinical") # sheet name
 ```
 
-We should now see two objects for the datasets we loaded in our Environment window. In the environment window we can also see the number of observations and the number of variables in each object.
+We should now see two objects (both data frames) for the datasets we loaded in our environment window. In the environment window we can also see the number of observations and the number of variables in each object.
 
 ### Try it on your own!
 
@@ -66,15 +69,19 @@ clinical.24 <- rio::import(
 ```
 
 
-For general awareness, R can load many other data types including: 
+For general awareness, R can load many other data types such as: 
 
-- XXX
-- XXX
-- XXX
+- Comma and tab-separated files (.csv, .tsv)
+- Text files (.txt)
+- SAS files (.sas7bdat, .xpt)
+- SPSS files(.sav, .por)
+- STATA files (.dta)
+- R files (.RData, .Rda, Rds)
+
 
 ### Try it on your own!
 
-Take a minute to first read about the haven package: https://haven.tidyverse.org/
+Take a minute to first read about the haven package, which can be used for loading SAS, SPSS, and STATA files: https://haven.tidyverse.org/
 
 Then use the help function below to explore the function that loads data from your typical statistical analysis software package (e.g., SAS, SPSS, STATA).
 
@@ -91,21 +98,22 @@ Then use the help function below to explore the function that loads data from yo
 
 ## 2. Explore Data
 
-Let's start with exploring demographic.18to23 file. We can get a quick view of our data in the environment window by clicking the arrow next to the object name.
+Let's start with exploring the `demographic.18to23` data frame. We can get a quick view of our data in the environment window by clicking the arrow next to the object name.
 
-If you click on the data, it will open as a new tab. This operates the same as calling the function:
+If you click on the object, it will open as a new tab. This operates the same as calling the function:
 
 ```{r}
 View(demographic.18to23) # opens data frame as a new tab
 ```
 
 Let's explore further to get:
-    + Names of the columns in our data frame using `names()`
-    + Basic attributes of each variable using `str()` and `summary()`
-    + Explore first few or last few rows with `head()` and `tail()`
-    + Class type of a variable `class()`
-    + Get a table of variable values `table()` *Note this function can also be used for crosstabs!*
-    + Count the number of missing values using `sum()` with `is.na()`
+
+  + Names of the columns in our data frame using `names()`
+  + Basic attributes of each variable using `str()` and `summary()`
+  + Explore first few or last few rows with `head()` and `tail()`
+  + Class type of a variable `class()`
+  + Get a table of variable values `table()` *Note this function can also be used for crosstabs!*
+  + Count the number of missing values using `sum()` with `is.na()`
     
     
 ```{r}
@@ -117,7 +125,7 @@ names(demographic.18to23)
 # Structure
 str(demographic.18to23)
 
-# First few or last few rows
+# First 6 and last 6 rows
 head(demographic.18to23)
 tail(demographic.18to23)
 
@@ -128,12 +136,12 @@ summary(demographic.18to23)
 class(demographic.18to23$DOB_YY)
 
 # Table of variable
-table(demographic.18to23$DOB_YY, useNA = "always") # useNA = "always tells the table to include a count for any NA-type missings
+table(demographic.18to23$DOB_YY, useNA = "always") # useNA = "always" tells the table to include a count for any NA-type missings
 
 # Crosstab
-table("Year" = demographic.18to23$DOB_YY, 
-      "Race & Ethnicity" = demographic.18to23$MRACEHISP, 
-      useNA = "always")
+table("Year" = demographic.18to23$DOB_YY, # Display and label rows as year
+      "Race & Ethnicity" = demographic.18to23$MRACEHISP, # Display and label columns as race/ethnicity groups
+      useNA = "always") # show R recognized missings
 
 # Can also count missing values using is.na() nested in sum()
 sum(is.na(demographic.18to23$DOB_YY))
@@ -146,18 +154,23 @@ Explore the remaining three objects to get a sense of data structure.
 
 ```{r}
 ####----Clinical 18 to 23----####
+str(clinical.18to23)
+summary(clinical.18to23)
 
 ####----Demographic 2024----####
+str(demographic.24)
+summary(demographic.24)
 
 ####----Clinical 2024----####
-
+str(clinical.24)
+summary(clinical.24)
 ```
 
 
 
 ## 3. Join Data
 
-For our desired output, we need to join the demographic and clinical variables for each year set. We will perform a left join using the demographic data frame as the base and joining the clinical data to it based on the shared "id". 
+For our desired output, we need to join the demographic and clinical variables for each year grouping. We will perform a left join using the demographic data frame as the base and joining the clinical data to it based on the shared "id". 
 
 You can read about other join types in R here: https://dplyr.tidyverse.org/reference/mutate-joins.html
 
@@ -230,7 +243,7 @@ If you look in your environment panel of the R Studio, you should now only have 
 
 We have two primary filtering tasks for our report:
 
-1. Our report is going to focus only on 2020-2024 data so we need to remove rows from 2018
+1. Our report is going to focus only on 2020-2024 data so we need to remove rows from 2018.
 2. The focus of our report is going to be on preterm births, so for this example we will need to filter to observations with gestational age information available. 
 
 Starting with task #1: filter to 2020-2024 years only:
@@ -244,7 +257,7 @@ births20to24 <- births18to24 %>%
 
 A couple things to note about the above. In R, we use the logical `==` for equivalence but since we are filter from a list, we need to use the operator `%in%`. 
 
-You'll also notice that the years in a list `c()` and are quoted. Quotes are needed because the year class type is a character.
+You'll also notice that the years in a list `c()` and are quoted. Quotes are needed because the year is a variable of character class type.
 
 ### Try it on your own!
 
@@ -326,7 +339,7 @@ In R, that missing needs to be coded as a specific missing value that is consist
 * `NA_real_` for numeric class type
 * `NA` for generic NA use
 
-Remember, in R everything needs to be assigned because it is an object-oriented language. To do this, we will make a new variable for each of the above using the appropriate class function. 
+We will make a new variable for each of the above using the appropriate class function. 
 
 Let's start with `MRACEHISP`, and use the `mutate()` function from the `dplyr` package to create a new variable named `MRACEHISP.na`.
 
@@ -362,10 +375,9 @@ class(births20to24_step6$DMETH_REC)
 
 # make new variable with NA_real_
 births20to24_step6.pt2 <- births20to24_step6 %>%
-                            mutate(DMETH_REC.na = ifelse(DMETH_REC == 9, 
-                                                         NA_character_, 
-                                                         DMETH_REC))
-# If DMETH_REC == 9, code as NA, otherwise keep the value of DMETH_REC
+                            mutate(DMETH_REC.na = ifelse(DMETH_REC == 9, # If DMETH_REC == 9,
+                                                         NA_character_, # code as NA type
+                                                         DMETH_REC)) # otherwise keep value of DMETH_REC
 
 ### CODE CHECKS!
 # check the coding worked
@@ -380,7 +392,7 @@ table(dmeth_rec = births20to24_step6.pt2$DMETH_REC,
 
 ## 7. Changing Variable Class Types
 
-Recall that R stores everything as an object, and each object has a class. Commonly used classes are:
+We've already talked about R class types, of which have the following functions to transform a variable to that class type:
 1. logical (e.g., `TRUE`, `FALSE`): `as.logical()`
 2. integer: `as.integer()`
 3. numeric: `as.numeric()`
@@ -394,7 +406,7 @@ In our data, we will want to change the following variable class types so that R
 * `DMETH_REC.na`: numeric --> factor
 * `OEGest_R3:` numeric --> factor
 
-Remember, in R everything needs to be assigned because it is an object-oriented language. To do this, we will make a new variable for each of the above using the appropriate class function.
+To do this, we will make a new variable for each of the above using the appropriate class function.
 
 Let's start with `OEGest_R3`, and use the `mutate()` function from the `dplyr` package to create a new variable named `OEGest_R3.fact`.
 
@@ -415,7 +427,7 @@ table(births20to24_step7$OEGest_R3.fact, useNA = "always")
 
 ### Try it on your own!
 
-Create a new object named `births20to24_step7.pt2` from `births20to24_step7` with a new variable for `MAGER`, `MRACEHISP.na`, and `DMETH_REC.na` with a name structure replacing the `.na` and now ending in `.fact` for factor type (i.e. `MRACEHISP.fact`) and `.int` for integer type (i.e. `MAGER.int`). Keep Non-Hispanic White and Vaginal as the reference values.
+Create a new object named `births20to24_step7.pt2` from `births20to24_step7` with new variables for `MAGER`, `MRACEHISP.na`, and `DMETH_REC.na` with a name structure replacing the `.na` and now ending in `.fact` for factor type (i.e. `MRACEHISP.fact`) and `.int` for integer type (i.e. `MAGER.int`). Keep Non-Hispanic White and Vaginal as the reference values.
 
 The two factors variables currently have the following levels:
 
@@ -825,7 +837,7 @@ year.count20_24 <- births20to24.final %>%
 
 ```
 
-**Important:** the `group_by()` function is *sticky* and cannot be visualized in your data frame. What this means it is lingers on for future tasks unless you add the `ungroup()` function after the tasks you wanted to group by to tell R "we are done grouping by this variable!". 
+**Important:** the `group_by()` function is *sticky* and cannot be visualized in your data frame. What this means it is lingers on for future tasks unless you add the `ungroup()` function after the tasks you wanted to group by to tell R "Hey, we are done grouping by this variable!". 
 
 Before we switch over to building our table, it might be nice to have a table that has the top row with the aggregated count, and then each year below it.
 
@@ -994,10 +1006,10 @@ We now want to prepare our data to make a similar figure as we just made for mat
   5. Calculate `Preterm Births`, `Live Births`, and `preterm_rate_per100`
   6. Remove missing levels of `HYPE.recode` and `DIAB.recode`
   7. Save as a .RData file named `hype_diab_rates.RData`
-  8. Move over to the report.rmd file and complete the hypertension and diabetes section (i.e., header, summary, and make a figure). 
-    + Make this figure a bar chart showing both variables, with bars going upright (not flipped horizontally like the last example).
+  8. Move over to the report.rmd file. 
     + Sweep your environment before moving over to the report.rmd
-    + Don't forget to add the load dataset code to the setup R code chunk! 
+    + Add the load dataset code to the setup R code chunk 
+    + Check on how your neighbors are doing, and we'll move on to the figure in a few minutes!
 
 ```{r eval = F}
 # Load our clean analytic dataset
