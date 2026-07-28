@@ -345,8 +345,10 @@ iris %>% # original object
 
 Throughout the day, you can reference this cheat sheet to build intuition about R syntax:
 
+![](r fundamentals pngs/r_cheatsheet.png){fig-align="center"}
+
 ::: fragment
-*Notice an error in the SAS, SPSS, or Stata code - let me know!*
+*Notice an error or have suggestions for the SAS, SPSS, or Stata example code - let me know!*
 :::
 
 ## 10. Questions?
