@@ -1,6 +1,5 @@
 ---
-title: "R Function Cheat Sheet"
-subtitle: "for SAS, SPSS, and Stata users"
+title: "R Function Cheat Sheet for SAS, SPSS, and Stata users"
 author: "Katie Labgold, PhD, MPH"
 date: "Last updated: `r format(Sys.Date(), '%m/%d/%Y')`"
 output:
@@ -16,7 +15,7 @@ library(flextable)
 library(htmltools)
 
 # --- EDIT THIS PATH if the xlsx lives somewhere else ---
-df <- rio::import("Labgold20206_R_function_cheatsheet_corrected.xlsx")
+df <- rio::import("Labgold2026_R_function_cheatsheet_v2.xlsx")
 
 # Shared styling helper so every table looks the same
 style_table <- function(ft, header_color = "#2C3E50") {

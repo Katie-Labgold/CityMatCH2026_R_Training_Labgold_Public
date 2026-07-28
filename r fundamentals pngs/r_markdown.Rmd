@@ -1,0 +1,24 @@
+---
+title: "R Markdown"
+author: "K Labgold"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is an R Markdown file!
+
+You can write here like you would in a normal word document. 
+
+# And even add headers!
+
+Code goes in specific areas called chunks, and the output shows directly below it when you click the green arrow on the right side of the chunk:
+
+```{r}
+mean(iris$Petal.Width)
+```
+
+
