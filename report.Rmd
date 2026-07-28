@@ -11,8 +11,10 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 
 # load packages
-pacman::p_load(here, dplyr, flextable, ggplot2)
-
+library(here)
+library(dplyr)
+library(flextable)
+library(ggplot2)
 
 # After Part 2, Step #3 of data_prep.rmd, load `births20to24_basicsummary`
 load(here("training_data_files", "clean", "births20to24_basicsummary.rdata"))
