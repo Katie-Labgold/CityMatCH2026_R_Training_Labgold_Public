@@ -1,4 +1,4 @@
-# CityMatCH2026_R_Training_Labgold
+# CityMatCH2026_R_Training_Labgold {PRIVATE VERSION - ALL FILES}
 
 Files for CityMatCH 2026 **R for Applied MCH Epidemiologists** Training
 
