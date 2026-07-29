@@ -13,13 +13,15 @@ library(rio)
 library(here)
 library(dplyr)
 library(tidyr)
+library(flextable)
 ```
 
 # Overview
 
-Our objective is to create a report on preterm births for US territories during 2020-2024 using the publicly available births data from (CDC NCHS)[https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm].
+Our objective is to create a report on preterm births for US territories during 2020-2024 using the publicly available births data from [CDC NCHS](https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm).
 
 This document is split into 2 parts:
+
 1. Preparing the analytic data set
 2. Preparing the report summaries
 
@@ -31,16 +33,16 @@ Part 1 will cover the R syntax for your standard operations of:
 - Exploring data using basic summaries 
 - Joining datasets together based on a shared column id 
 - Row binding datasets together 
-- Subsetting to only necessary columns 
+- Subsetting to specific columns 
 - Filtering to specific conditions 
 - Creating variables of different types (i.e., character, numeric, factor, etc.) 
 - Creating new variables from existing variables 
 
 ## 1. Load Initial Datasets
 
-In this example we'll be loading in two excel files, each with two sheets. Let's use the `rio` package to pull in the 2020-2023 excel file.
+In this example we'll be loading in two excel files, each with two sheets. Let's use the *rio* package to pull in the 2020-2023 excel file.
 
-We will need to pull in each sheet separately: `demographic` and `clinical`
+We will need to pull in each sheet (*demographic* and *clinical*) separately:
 
 ```{r}
 demographic.18to23 <- rio::import(
@@ -52,11 +54,13 @@ clinical.18to23 <- rio::import(
                            which = "clinical") # sheet name
 ```
 
-We should now see two objects (both data frames) for the datasets we loaded in our environment window. In the environment window we can also see the number of observations and the number of variables in each object.
+We are using the *here* package to standardize file paths from our project folder (*.Rproj*). The advantage of this setup is that it can transfer across computers/users as long as they are using the same project folder organization!
+
+After running the above code chunk, we should now see two objects (both data frames) for the datasets we loaded in our environment window. In the environment window we can also see the number of observations and the number of variables in each object.
 
 ### Try it on your own!
 
-Create two objects, one named `demographic.24` that pulls in the 2024 births data demographic variables sheet, and `clinical.24` that pulls in the 2024 births data clinical variables sheet.
+Create two objects, one named *demographic.24* that pulls in the 2024 births data demographic variables sheet, and one named *clinical.24* that pulls in the 2024 births data clinical variables sheet.
 
 ```{r}
 demographic.24 <- rio::import(
@@ -83,7 +87,7 @@ For general awareness, R can load many other data types such as:
 
 Take a minute to first read about the haven package, which can be used for loading SAS, SPSS, and STATA files: https://haven.tidyverse.org/
 
-Then use the help function below to explore the function that loads data from your typical statistical analysis software package (e.g., SAS, SPSS, STATA).
+Then use the help function (*?*) below to explore the function that loads data from your typical statistical analysis software package (e.g., SAS, SPSS, STATA).
 
 ```{r, eval = FALSE}
 # SAS
@@ -98,7 +102,7 @@ Then use the help function below to explore the function that loads data from yo
 
 ## 2. Explore Data
 
-Let's start with exploring the `demographic.18to23` data frame. We can get a quick view of our data in the environment window by clicking the arrow next to the object name.
+Let's start with exploring the *demographic.18to23* data frame. We can get a quick view of our data in the environment window by clicking the arrow next to the object name.
 
 If you click on the object, it will open as a new tab. This operates the same as calling the function:
 
@@ -108,12 +112,12 @@ View(demographic.18to23) # opens data frame as a new tab
 
 Let's explore further to get:
 
-  + Names of the columns in our data frame using `names()`
-  + Basic attributes of each variable using `str()` and `summary()`
-  + Explore first few or last few rows with `head()` and `tail()`
-  + Class type of a variable `class()`
-  + Get a table of variable values `table()` *Note this function can also be used for crosstabs!*
-  + Count the number of missing values using `sum()` with `is.na()`
+  + Names of the columns in our data frame using *names()*
+  + Basic attributes of each variable using *str()* and *summary()*
+  + Explore first few or last few rows with *head()* and *tail()*
+  + Class type of a variable *class()*
+  + Get a table of variable values *table()* **Note** this function can also be used for crosstabs!
+  + Count the number of missing values using *sum()* with *is.na()*
     
     
 ```{r}
@@ -184,7 +188,7 @@ births18to23 <- demographic.18to23 %>% # x
 
 ### Try it on your own!
 
-Create a new object named `births24` using a left_join from the demographic and clinical 2024 birth files.
+Create a new object named *births24* using a left_join from the demographic and clinical 2024 birth files.
 
 ```{r}
 births24 <- demographic.24 %>%
@@ -209,11 +213,11 @@ head(births24)
 
 ## 4. Rowbind Data
 
-Now to have one working data frame, we need to rowbind the 2018-2023 and 2024 data frames. As with most tasks in R, there are many functions available to do this. I tend to recommend the `bind_rows()` function from the `dplyr` package, since it (A) will automatically align columns -- i.e. you don't have to have them all in the same order already for each data frame -- and (B) it will fill in missing columns with the proper missing variable type.
+Now to have one working data frame, we need to rowbind the 2018-2023 and 2024 data frames. As with most tasks in R, there are many functions available to do this. I tend to recommend the *bind_rows()* function from the *dplyr* package, since it (A) will automatically align columns -- i.e. you don't have to have them all in the same order already for each data frame -- and (B) it will fill in missing columns with the proper missing variable type.
 
 ### Try it on your own!
 
-Using the R help function for `dplyr::bind_rows()` to row bind `births18to23` and `births24`. Name the new object `births18to24`. After making the new dataframe, explore the dataframe to ensure the operation worked as intended.
+Using the R help function for *dplyr::bind_rows()* to understand how to row bind *births18to23* and *births24*. Name the new object *births18to24*. After making the new object, explore it to ensure the operation worked as intended.
 
 ```{r, eval = FALSE}
 # R helper
@@ -229,8 +233,9 @@ View(births18to24)
 table(births18to24$DOB_YY, useNA = "always")
 ```
 
-**Clean out Environment**
-Before we move on, let's clean up our environment a bit. We are are now working with `births18to24`, but we have several other objects still in our environment. We can remove no longer needed objects with the rm() function.
+**Clean out your environment!**
+
+Before we move on, let's clean up our environment so it's not so cluttered. We are are now working with *births18to24*, but we have several other objects still in our environment. We can remove no longer needed objects with the rm() function.
 
 ```{r}
 rm(births18to23, births24, clinical.18to23, clinical.24, demographic.18to23, demographic.24)
@@ -246,7 +251,8 @@ We have two primary filtering tasks for our report:
 1. Our report is going to focus only on 2020-2024 data so we need to remove rows from 2018.
 2. The focus of our report is going to be on preterm births, so for this example we will need to filter to observations with gestational age information available. 
 
-Starting with task #1: filter to 2020-2024 years only:
+**Starting with task #1: filter to 2020-2024 years only**
+
 ```{r}
 class(births18to24$DOB_YY) # character class type - will need quotes!
 
@@ -255,13 +261,13 @@ births20to24 <- births18to24 %>%
 
 ```
 
-A couple things to note about the above. In R, we use the logical `==` for equivalence but since we are filter from a list, we need to use the operator `%in%`. 
+A couple of things to note about the above code. In R, we use the logical *==* for equivalence but since we are filtering from a list, we need to use the operator *%in%*. 
 
-You'll also notice that the years in a list `c()` and are quoted. Quotes are needed because the year is a variable of character class type.
+You'll also notice that the years in a list denoted by *c()* and the years are in quoted. Quotes are needed because the year is a variable of character class type.
 
 ### Try it on your own!
 
-What would it look like to filter only to 2020? Create a dummy dataframe named `births2020` that is only 2020 births.
+What would it look like to filter only to 2020? Create a dummy object named *births2020* that is only 2020 births.
 
 ```{r}
 # Option 1: using ==
@@ -276,9 +282,11 @@ births2020 <- births18to24 %>%
 
 ### Try it on your own!
 
-Perform task #2: filter to births with gestational age data available [`OEGest_R3` value of 1 or 2]. Make the new object named `births18to24_step5`.
+**Perform task #2** 
 
-**Hint:** The negative of `==` is `!=`.
+Filter to births with gestational age data available [*OEGest_R3* value of 1 or 2]. Name the new object *births18to24_step5*.
+
+**Hint:** The negative of *==* is *!=*.
 
 ```{r}
 class(births20to24$OEGest_R3) # numeric - will NOT need quotes!
@@ -291,21 +299,21 @@ table(births20to24_step5$OEGest_R3, useNA = "always")
 
 ```
 
-As a bonus, we could filter using the opposite of `%in%`. Let's use the dummy `births2020` dataset as an example.
+As a bonus, we could filter using the opposite of *%in%*. Let's use the dummy object *births2020* as an example.
 
-We can create this using the built-in R function `Negate()`. Just one more great example of how flexible R is! 
+We can create this using the built-in R function *Negate()*. Just one more great example of how flexible R is! 
 
 ```{r}
-`%notin%` <- Negate(`%in%`)
+`%notin%` <- Negate(`%in%`) # create a new operation that is the negative of %in%
 
 births2020 <- births2020 %>%
-                filter(OEGest_R3 %notin% c(3))
+                filter(OEGest_R3 %notin% c(3)) # filter to gestational age not in 3
 
 table(births2020$OEGest_R3, useNA = "always")              
 ```
 
 
-Let's now remove `births2020` from the environment because it was just for practice!
+Let's now remove *births2020* from the environment because it was just for practice!
 
 ```{r}
 rm(births2020)
@@ -313,7 +321,7 @@ rm(births2020)
 
 ## 6. Coding Missing Values
 
-`MRACEHISP` and `DMETH_REC` both have one value that is unknown/missing. 
+*MRACEHISP* and *DMETH_REC* both have one value that is unknown/missing. 
 
 | **MRACEHISP** | **Label**             |
 | :---          | :---                  | 
@@ -334,16 +342,17 @@ rm(births2020)
 
 
 In R, that missing needs to be coded as a specific missing value that is consistent with it's class type. This might be:
-* `NA_character_` for character class type
-* `NA_integer_` for integer class type
-* `NA_real_` for numeric class type
-* `NA` for generic NA use
 
-We will make a new variable for each of the above using the appropriate class function. 
++ *NA_character_* for character class type
++ *NA_integer_* for integer class type
++ *NA_real_* for numeric class type
++ *NA* for generic NA use
 
-Let's start with `MRACEHISP`, and use the `mutate()` function from the `dplyr` package to create a new variable named `MRACEHISP.na`.
+We will make a new variable for *MRACEHISP* and *DMETH_REC* using the appropriate class function. 
 
-We will use the `ifelse()` function to change the missing value to the appropriate class NA value. 
+Let's start with *MRACEHISP*, and use the *mutate()* function from the *dplyr* package to create a new variable named *MRACEHISP.na*.
+
+We will use the *ifelse()* function to change the missing value to the appropriate class NA value. 
 
 ```{r}
 # check the class of MRACEHISP
@@ -367,7 +376,7 @@ table(mracehisp = births20to24_step6$MRACEHISP,
 
 ### Try it on your own!
 
-Create a new object `births20to24_step6.pt2` from `births20to24_step6` to create a new variable `DMETH_REC.na` using the `mutate()` and `ifelse()` functions and the appropriate NA class.
+Create a new object *births20to24_step6.pt2* from *births20to24_step6* to create a new variable *DMETH_REC.na* using the *mutate()* and *ifelse()* functions to recode the missing values to the appropriate NA class.
 
 ```{r}
 # check the class of DMETH_REC
@@ -393,22 +402,24 @@ table(dmeth_rec = births20to24_step6.pt2$DMETH_REC,
 ## 7. Changing Variable Class Types
 
 We've already talked about R class types, of which have the following functions to transform a variable to that class type:
-1. logical (e.g., `TRUE`, `FALSE`): `as.logical()`
-2. integer: `as.integer()`
-3. numeric: `as.numeric()`
-4. character: `as.character()`
-5. factor (e.g., categorical variables): `factor()`
+
+1. logical (e.g., *TRUE*, *FALSE*): *as.logical()*
+2. integer: *as.integer()*
+3. numeric: *as.numeric()*
+4. character: *as.character()*
+5. factor (e.g., categorical variables): *factor()*
 
 
 In our data, we will want to change the following variable class types so that R will recognize them in the way we plan to use them in our analysis:
-* `MAGER`: character --> integer
-* `MRACEHISP.na`: character --> factor
-* `DMETH_REC.na`: numeric --> factor
-* `OEGest_R3:` numeric --> factor
+
+* *MAGER*: character --> integer
+* *MRACEHISP.na*: character --> factor
+* *DMETH_REC.na*: numeric --> factor
+* *OEGest_R3*: numeric --> factor
 
 To do this, we will make a new variable for each of the above using the appropriate class function.
 
-Let's start with `OEGest_R3`, and use the `mutate()` function from the `dplyr` package to create a new variable named `OEGest_R3.fact`.
+Let's start with *OEGest_R3*, and use the *mutate()* function from the *dplyr* package to create a new variable named *OEGest_R3.fact*.
 
 For factors, we can also assign the level names and the reference value.
 
@@ -427,9 +438,11 @@ table(births20to24_step7$OEGest_R3.fact, useNA = "always")
 
 ### Try it on your own!
 
-Create a new object named `births20to24_step7.pt2` from `births20to24_step7` with new variables for `MAGER`, `MRACEHISP.na`, and `DMETH_REC.na` with a name structure replacing the `.na` and now ending in `.fact` for factor type (i.e. `MRACEHISP.fact`) and `.int` for integer type (i.e. `MAGER.int`). Keep Non-Hispanic White and Vaginal as the reference values.
+Create a new object named *births20to24_step7.pt2* from *births20to24_step7* with new variables for *MAGER*, *MRACEHISP.na*, and *DMETH_REC.na*.
 
-The two factors variables currently have the following levels:
+Name the variables so that the *.na* will now end in *.fact* for factor types (i.e. *MRACEHISP.fact*) and *.int* for integer types (i.e. *MAGER.int*). Keep "Non-Hispanic White" and "Vaginal" as the reference values.
+
+Recall, the two factor variables currently have the following levels:
 
 | **MRACEHISP.na** | **Label**             |
 | :---             | :---                  | 
@@ -456,6 +469,7 @@ The two factors variables currently have the following levels:
                           var1 = oldvar1,
                           var2 = oldvar2
                  )
+
 
 ```{r}
 births20to24_step7.pt2 <- births20to24_step7 %>%
@@ -508,9 +522,9 @@ levels(births20to24_step7.pt2$DMETH_REC.fact)
 
 ### Try it on your own!
 
-Let's now remove `births20to24`, `births20to24_step5`, `births20to24_step6`, `births20to24_step6.pt2`, `births20to24_step7` from the environment to clean up our workspace a bit. 
+Let's now remove *births20to24*, *births20to24_step5*, *births20to24_step6*, *births20to24_step6.pt2*, *births20to24_step7* from the environment to clean up our workspace. 
 
-Only `births18to24` and `births20to24_step7.pt2` should remain in the environment.
+Only *births18to24* and *births20to24_step7.pt2* should remain in your environment.
 
 ```{r}
 rm(births20to24, births20to24_step5, births20to24_step6, births20to24_step6.pt2, births20to24_step7)
@@ -519,11 +533,11 @@ rm(births20to24, births20to24_step5, births20to24_step6, births20to24_step6.pt2,
 
 ## 8. Creating Combined Variables
 
-We've already covered the `ifelse()` equivalent for R when creating new variables with a single condition. When we have multi-condition variable creation, `case_when()` is a better fit.
+We've already covered the *ifelse()* equivalent for R when creating new variables with a single condition. When we need to create a new variable based on multiple conditions, *case_when()* is often a better fit.
 
 
 
-Any diabetes
+**Any Diabetes**
 
 | **DIAB.recode**     | **RF_PDIAB & RF_GDIAB**           |
 | :---                | :---                              |
@@ -561,10 +575,10 @@ births20to24_step8 %>%
 
 ### Try it on your own!
 
-Create a new object named `births20to24_step8.pt2` from `births20to24_step8` to make the new recode variable for any hypertension and the 10-year age category variables using `mutate()` and `case_when()`. Don't forget to transform them into factor variables named `HYPE.recode.fact` and `MAGER.recode.fact`!
+Create a new object named *births20to24_step8.pt2* from *births20to24_step8*. Create the new recoded variable for any hypertension and the 10-year age category variables using *mutate()* and *case_when()*. Don't forget to transform them into factor variables named *HYPE.recode.fact* and *MAGER.recode.fact*!
 
 
-Any hypertension
+**Any Hypertension**
 
 | **HYPE.recode**     | **RF_PHYPE & RF_GHYPE & RF_EHYP**                    |
 | :---                | :---                              |
@@ -572,7 +586,7 @@ Any hypertension
 | No                  | Any combination of U and N with at least one N     |
 | Missing             | RF_PHYPE = U and RF_GHYPE = U and EHYPE = U        |
 
-10-year age categories
+**10-year Age Categories**
 
 | **MAGER.recode**    | **MAGER.int**   |
 | :---                | :---            |
@@ -582,7 +596,7 @@ Any hypertension
 | 35-44 Years         | 35-44           |
 | 45+ Years           | 45-50           |
 
-**Hint:** In R, when listing sequential numbers you can list as `c(1,2,3)` or `c(1:3)`
+**Hint:** In R, when listing sequential numbers you can list as *c(1,2,3)* or *c(1:3)*.
 
 ```{r}
 births20to24_step8.pt2 <- births20to24_step8 %>%
@@ -645,7 +659,6 @@ births20to24_step8.pt2 %>%
 Similar to other statistical programs, we can clean up our final analytic dataset by only keeping the variables we will be using moving forward.
 
 
-
 ```{r}
 keep_vars <- c("id", "DOB_YY", "OEGest_R3.fact", "MRACEHISP.fact", "MAGER.recode", "DIAB.recode", "HYPE.recode", "DMETH_REC.fact", "DBWT")
 
@@ -658,7 +671,7 @@ names(births20to24_step9)
 
 ### Try it on your own!
 
-Turns out we don't actually need `DBWT`. Let's create a new object named `births20to24.final` from `births20to24_step9` and drop `DBWT` using the drop variable method: (i.e. using a `-` before the variable list).
+Turns out we don't actually need *DBWT*. Let's create a new object named *births20to24.final* from *births20to24_step9* and drop *DBWT* using the drop variable method: (i.e. using a *-* before the variable list [*all_of(c(vars))*]).
 
 
 ```{r}
@@ -671,11 +684,11 @@ births20to24.final <- births20to24_step9 %>%
 
 ## 10. Pulling it all together with pipes
 
-Similar to other statistical programming languages, we do not need to have our code run step by step! We can use R pipes (`%>%) to stack our code all in one chunk.
+Similar to other statistical programming languages, we do not need to have our code run step by step! We can use R pipes (*%>%*) to stack our code all in one chunk.
 
 ### Try it on your own! 
 
-Combine steps #5 through #8 using pipes to create a new object named `births20to24.final2` from `births18to24`. Recall that consecutive `mutate()` and `filter()` statements can be combined in the same `mutate()` and `filter()` statements with commas.
+Combine steps #5 through #8 using pipes to create a new object named *births20to24.final2* from *births18to24*. Recall that consecutive *mutate()* and *filter()* statements can be combined in the same *mutate()* and *filter()* statements with commas.
 
 ```{r}
 # Define variables for selection in step 9
@@ -768,7 +781,7 @@ Note we could have piped even earlier (from joins and row binds!) had we not cle
 
 ## 11. Save data as cleaned R data file
 
-Congrats on having finished your R analytic data set cleaning! For easier use in the future, let's save our clean analytic dataset as an R data file in the `training_data_files` folder.
+Congrats on having finished your R analytic data set cleaning! For easier use in the future, let's save our clean analytic dataset as an R data file in the *training_data_files* folder.
 
 ```{r, eval = FALSE}
 save(births20to24.final, 
@@ -783,14 +796,15 @@ Before closing out, click the little broom button in the top right environment t
 
 # Part 2. Report Summaries
 
-At this point we have our clean analytic dataset, but the easiest way to work in R for creating summaries (think: calculating rates/prevalences, counts by group, etc.) for tables and figures is to make individual data frames.
+At this point we have our clean analytic dataset, but the easiest way to work in R for creating summaries (*think: calculating rates/prevalences, counts by group, etc.*) for tables and figures is to make individual data frames.
 
 In this section we'll prepare separate data frames for the following tasks:
+
 1. 2020-2024 aggregated count of preterm and live births
 2. Preterm birth and live birth counts by year
 3. Preterm birth rates by year
-4. Preterm birth rates by maternal age and race/ethnicity
-5. Preterm birth rates by diabetes history and hypertension history
+4. 2020-2024 aggregated preterm birth rates by maternal age and race/ethnicity
+5. 2020-2024 aggregated preterm birth rates by diabetes history and hypertension history
 
 ## 0. Load clean analytic data
 
@@ -811,7 +825,8 @@ count20_24 <- births20to24.final %>%
                   `Live Births` = n(), # n() gives us the count of all rows
                 )
 
-knitr::kable(count20_24) # View table
+count20_24 %>%
+  flextable() # View table
 
 # Data check! Confirm output:
 nrow(births20to24.final) # matches total n
@@ -820,11 +835,11 @@ table(births20to24.final$OEGest_R3.fact) # matched PTB count
 
 ## 2. Preterm birth and live birth counts by year
 
-We can adapt the code above to give us one row of counts per year. In R, we can do this by piping (`%>%`) `group_by(variable_name)` before the function you want to group by. Try adapting the code above to group by `DOB_YY`.
+We can adapt the code above to give us one row of counts per year. In R, we can do this by piping (*%>%*) *group_by(variable_name)* before the function you want to group by. Try adapting the code above to group by *DOB_YY*.
 
 ### Try it on your own!
 
-Name your new object `year.count20_24`.
+Name your new object *year.count20_24*.
 
 ```{r}
 year.count20_24 <- births20to24.final %>%
@@ -837,17 +852,17 @@ year.count20_24 <- births20to24.final %>%
 
 ```
 
-**Important:** the `group_by()` function is *sticky* and cannot be visualized in your data frame. What this means it is lingers on for future tasks unless you add the `ungroup()` function after the tasks you wanted to group by to tell R "Hey, we are done grouping by this variable!". 
+**Important:** the *group_by()* function is **sticky** and cannot be visualized in your data frame. What this means it is lingers on for future tasks unless you add the *ungroup()* function after the tasks you wanted to group by to tell R "Hey, we are done grouping by this variable!". 
 
 Before we switch over to building our table, it might be nice to have a table that has the top row with the aggregated count, and then each year below it.
 
 ### Try it on your own!
 
-Using functions we've covered earlier today, create a new object named `counts.table` - a 6 row table with aggregated year count as the first row, and 2020-2024 below it:
+Using functions we've covered earlier today, create a new object named *counts.table* - a 6 row table with aggregated year count as the first row, and 2020-2024 below it:
 
-* Set the value of `DOB_YY` to `Overall 2020-2024` for the aggregate row
-* Use the `rename("new_name" = "old_name")` function to rename `DOB_YY` to `Birth Year`
-* Use the `relocate(variable)` function to ensure `Birth Year` is the first column
+* Set the value of *DOB_YY* to *Overall 2020-2024* for the aggregate row
+* Use the *rename("new_name" = "old_name")* function to rename *DOB_YY* to *Birth Year*
+* Use the *relocate(variable)* function to ensure *Birth Year* is the first column
 
 ```{r}
 counts.table <- count20_24 %>% # Start with aggregate df to ensure 1st row
@@ -861,11 +876,11 @@ counts.table <- count20_24 %>% # Start with aggregate df to ensure 1st row
 
 # 3. Preterm Birth Rates by Year
 
-We are going to create a time trend figure of preterm birth rates per 1,000 live births by year. So next step: calculate our rates!
+We are going to create a time trend figure of preterm birth rates per 1,000 live births by year. Let's calculate our rates!
 
 ### Try it on your own!
 
-Using functions we've already covered, create a new object named `year.rate20_24` from `counts.table` with a new variable named `preterm_rate_per100` that is the number of preterm births, divided by the live births, and multiplied by 100.
+Using functions we've already covered, create a new object named *year.rate20_24* from *counts.table* with a new variable named *preterm_rate_per100* that is the number of preterm births divided by the live births, and multiplied by 100.
 
 **Hint:** arithmetic functions work very similarly to your usual stats package languages.
 
@@ -875,11 +890,12 @@ year.rate20_24 <- counts.table %>%
                       preterm_rate_per100 = (`Preterm Births`/`Live Births`)*100
                       )
 
-knitr::kable(year.rate20_24)
+year.rate20_24 %>%
+  flextable()
 
 ```
 
-We can see that the new preterm birth rate variable goes to 5 decimal places! Let's adapt the code above to clean it up using the `round(variable, number of decimals)` function wrapped around the current calculation.
+We can see that the new preterm birth rate variable goes to 5 decimal places! Let's adapt the code above to clean it up using the *round(variable, number of decimals)* function wrapped around the current calculation.
 
 ```{r}
 year.rate20_24 <- counts.table %>%
@@ -887,18 +903,18 @@ year.rate20_24 <- counts.table %>%
                       preterm_rate_per100 = round((`Preterm Births`/`Live Births`)*100, 1)
                       )
 
-knitr::kable(year.rate20_24) # 1 decimal place for the rate - much better!
-
+year.rate20_24 %>% # 1 decimal place for the rate - much better!
+  flextable()
 ```
 
 
 ## Save tables for the report
 
-We will use `counts.table` for the counts table and `year.rate20_24` for the preterm birth rate time trend. To make these easily accessible in our report document, let's save them to our `clean` data folder. 
+We will use *counts.table* for the counts table and *year.rate20_24* for the preterm birth rate time trend figure. To make these easily accessible in our report document, let's save them to our *clean* data folder. 
 
 ### Try it on your own!
 
-Let's save these two data frames as a .RData file in the `clean` data folder within the `training_data_files` folder with the name `births20to24_basicsummary.RData`.
+Let's save these two data frames as a .RData file in the *clean* data folder within the *training_data_files* folder with the name *births20to24_basicsummary.RData*.
 
 **Hint:** You should store both data frames in the same .RData file. Unfortunately the help documentation isn't great for this function, so try a quick google search if you get stuck!
 
@@ -910,7 +926,7 @@ save(counts.table, year.rate20_24, # we can list multiple files
 
 
 
-## Sweep your environment, and let's hop over to the `report.rmd` doc!
+**Sweep your environment, and let's hop over to the *report.rmd* doc!**
 
 
 # 4. Preterm Birth Rates by Maternal Age and Race/Ethnicity
@@ -921,9 +937,9 @@ Let's start by reloading our clean analytic dataset.
 load(here("training_data_files", "clean", "births20to24_final.RData"))
 ```
 
-Our output goal is bar chart of 2020-2024 5-year preterm birth rates stratified by maternal age and race/ethnicity. We'll design the figure so that the bar charts for each variable are side by side.
+Our output goal is a bar chart of 2020-2024 5-year preterm birth rates stratified by maternal age and race/ethnicity. We'll design the figure so that the bar charts for each variable are side by side.
 
-To do this, we'll need to put our data that is currently in *wide* format into *long* format (also known as *tidydata* in the R universe). Thankfully the `tidyr` package has the helpful function `pivot_longer()`:
+To do this, we'll need to put our data that is currently in **wide** format into **long** format (also known as **tidydata** in the R universe). Thankfully the *tidyr* package has the helpful function *pivot_longer()*:
 
 ```{r}
 age.raceeth_long <- births20to24.final %>%
@@ -941,11 +957,11 @@ nrow(births20to24.final)*2 # double because two variables now stacked as rows
 
 ### Try it on your own!
 
-Create a new object named `age.raceeth.rates` from `age.raceeth_long` to calculate the preterm birth rates for each variable's categories using the functions we've already covered. Use the same variable names we created previously (i.e., `Preterm Births`, `Live Births`, and `preterm_rate_per100`).
+Create a new object named *age.raceeth.rates* from *age.raceeth_long* to calculate the preterm birth rates for each variable's categories using the functions we've already covered. Use the same variable names we created previously (i.e., *Preterm Births*, *Live Births*, and *preterm_rate_per100*).
 
 **Hint:** You'll need to group by two variables to first calculate the preterm birth and live birth counts.
 
-When you're done, save your new data frame as `age_raceeth_rates.RData`
+When you're done, save your new data frame as *age_raceeth_rates.RData*.
 
 ```{r}
 age.raceeth.rates <- age.raceeth_long %>%
@@ -961,7 +977,7 @@ age.raceeth.rates <- age.raceeth_long %>%
 
 ```
 
-Before we save, we'll need to reset our factor levels. In our figure, we will have the bars of the bar chart oriented horizontally, and so we will need to put our levels in reverse order that we want to see them in. If the bars were upright, then the levels can be in the order to visualize.
+Before we save our new data, we'll need to reset our factor levels. In our figure, we will have the bars of the bar chart oriented horizontally, and so we will need to put our levels in reverse order that we want to see them in. If the bars were upright, then the levels can be in the order to visualize.
 
 ```{r}
 age.raceeth.rates <- age.raceeth.rates %>%
@@ -991,7 +1007,7 @@ save(age.raceeth.rates, # we can list multiple files
 )
 ```
 
-## Sweep your environment, and let's hop over to the `report.rmd` doc!
+**Sweep your environment, and let's hop over to the *report.rmd* doc!**
 
 # 5. Preterm Birth Rates by Hypertension History and Diabetes History
 
@@ -1000,16 +1016,15 @@ save(age.raceeth.rates, # we can list multiple files
 We now want to prepare our data to make a similar figure as we just made for maternal age and race/ethnicity. Using code we've already covered:
 
   1. Load our clean analytic dataset
-  2. Create a new object named `hype.diab.rates` from our clean analytic dataset
-  3. This new data frame should be in long format with new variables named `Comorbidity` for the variable names and `Reported` for the value names
-  4. `Reported` should be a factor with levels in the order that would have "Yes" be the first value in our figure
-  5. Calculate `Preterm Births`, `Live Births`, and `preterm_rate_per100`
-  6. Remove missing levels of `HYPE.recode` and `DIAB.recode`
-  7. Save as a .RData file named `hype_diab_rates.RData`
-  8. Move over to the report.rmd file. 
-    + Sweep your environment before moving over to the report.rmd
-    + Add the load dataset code to the setup R code chunk 
-    + Check on how your neighbors are doing, and we'll move on to the figure in a few minutes!
+  2. Create a new object named *hype.diab.rates* from our clean analytic dataset
+  3. This new data frame should be in long format with new variables named *Comorbidity* for the variable names and *Reported* for the value names
+  4. *Reported* should be a factor with levels in the order that would have "Yes" be the first value in our figure
+  5. Calculate *Preterm Births*, *Live Births*, and *preterm_rate_per100*
+  6. Remove missing levels of *HYPE.recode* and *DIAB.recode*
+  7. Save as a .RData file named *hype_diab_rates.RData*
+  8. Sweep your environment before moving over to the report.rmd
+  9. Move over to the report.rmd file and add the loaded dataset code to the setup R code chunk
+  10. Check on how your neighbors are doing, and we'll move on to the figure in a few minutes!
 
 ```{r eval = F}
 # Load our clean analytic dataset
