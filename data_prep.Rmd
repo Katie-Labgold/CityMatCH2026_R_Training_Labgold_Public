@@ -961,7 +961,6 @@ Create a new object named *age.raceeth.rates* from *age.raceeth_long* to calcula
 
 **Hint:** You'll need to group by two variables to first calculate the preterm birth and live birth counts.
 
-When you're done, save your new data frame as *age_raceeth_rates.RData*.
 
 ```{r}
 age.raceeth.rates <- age.raceeth_long %>%
@@ -1000,6 +999,8 @@ age.raceeth.rates <- age.raceeth.rates %>%
 class(age.raceeth.rates$Value)
 levels(age.raceeth.rates$Value)
 ```
+
+When you're done, save your new data frame as *age_raceeth_rates.RData*.
 
 ```{r, eval = F}
 save(age.raceeth.rates, # we can list multiple files 
