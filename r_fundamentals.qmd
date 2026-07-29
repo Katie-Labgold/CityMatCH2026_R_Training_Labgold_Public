@@ -1,5 +1,7 @@
 ---
-format: revealjs
+format: 
+  revealjs:
+    theme: default
 editor: visual
 incremental: true
 ---
@@ -16,7 +18,7 @@ Please make sure you have R and R studio installed, and have downloaded the work
 
 **My Goal:** In 20 minutes or less, introduce you to some R fundamentals (*with a focus on differences from your usual software*) that will before diving into the rest of the workshop.
 
-::: {.notes}
+::: notes
 But first, let me introduce myself!
 :::
 
@@ -79,11 +81,11 @@ To set up a new project for your next analysis, follow [these steps](https://int
 
 ## 3. Coding in R: R Scripts
 
-![](r fundamentals pngs/r_script.png){fig-align="center" width="588"}
+![](r%20fundamentals%20pngs/r_script.png){fig-align="center" width="588"}
 
 ## 3. Coding in R: R Markdown
 
-![](r fundamentals pngs/r_markdown.png){fig-align="center"}
+![](r%20fundamentals%20pngs/r_markdown.png){fig-align="center"}
 
 ## 3. Coding in R: R Markdown
 
@@ -93,7 +95,7 @@ Advantages of R Markdown:
 
 - When want to write a lot of documentation (vs using comments)
 
-![](r fundamentals pngs/r_markdown_knit.png){fig-align="center"}
+![](r%20fundamentals%20pngs/r_markdown_knit.png){fig-align="center"}
 
 ## 4. Objects
 
@@ -345,7 +347,7 @@ iris %>% # original object
 
 Throughout the day, you can reference this cheat sheet to build intuition about R syntax:
 
-![](r fundamentals pngs/r_cheatsheet.png){fig-align="center"}
+![](r%20fundamentals%20pngs/r_cheatsheet.png){fig-align="center"}
 
 ::: fragment
 *Notice an error or have suggestions for the SAS, SPSS, or Stata example code - let me know!*
