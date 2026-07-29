@@ -397,13 +397,21 @@
 <p><strong>Did you notice</strong>: <code>install.packages()</code> needed quotes, but <code>library()</code> did not!</p>
 </div>
 </section>
+<section id="packages-cont.-1" class="slide level2">
+<h2>5. Packages cont.</h2>
+<p>A very nifty feature of R is the built-in help window! You can get the documentation for a function in the bottom right R studio helper panel by running:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>?<span class="fu">mean</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+<img data-src="r%20fundamentals%20pngs/r_helper.png" class="quarto-figure quarto-figure-center r-stretch" width="419"></section>
 <section id="syntax-snippets---file-paths" class="slide level2">
 <h2>6. Syntax Snippets - File Paths</h2>
 <p>R uses forward slashes “<code>/</code>”. If you have a Windows (PC), your file path natively uses backslashes <code>\</code>.</p>
 <p><br></p>
 <p>For example, my copied file path is: <code>"C:\Users\klabg\K Labgold R\CityMatCH2026_RTrain"</code> but you’ll need to switch it to:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="st">"training_data_files/clean/births20to24_final.RData"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="st">"training_data_files/clean/births20to24_final.RData"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><br></p>
 <div class="fragment">
@@ -416,11 +424,11 @@
 <p>In R, all function calls need parentheses:</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">print</span>(iris)</span>
-<span id="cb10-2"><a href=""></a></span>
-<span id="cb10-3"><a href=""></a><span class="fu">mean</span>(iris<span class="sc">$</span>Petal.Width)</span>
-<span id="cb10-4"><a href=""></a></span>
-<span id="cb10-5"><a href=""></a><span class="fu">library</span>(dplyr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">print</span>(iris)</span>
+<span id="cb11-2"><a href=""></a></span>
+<span id="cb11-3"><a href=""></a><span class="fu">mean</span>(iris<span class="sc">$</span>Petal.Width)</span>
+<span id="cb11-4"><a href=""></a></span>
+<span id="cb11-5"><a href=""></a><span class="fu">library</span>(dplyr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="syntax-snippets---case-sensitivity" class="slide level2">
@@ -457,10 +465,10 @@
 <p>In R, we can string together multiple R commands to form a single step using a <strong>pipe</strong> (<code>%&gt;%</code> or <code>|&gt;</code>).</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>iris <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">length.plus.width =</span> Petal.Width <span class="sc">+</span> Petal.Length) <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href=""></a>  <span class="fu">select</span>(Petal.Width, Petal.Length, Species, length.plus.width) <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href=""></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>iris <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">length.plus.width =</span> Petal.Width <span class="sc">+</span> Petal.Length) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href=""></a>  <span class="fu">select</span>(Petal.Width, Petal.Length, Species, length.plus.width) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href=""></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Petal.Width Petal.Length Species length.plus.width
 1         0.2          1.4  setosa               1.6
@@ -491,10 +499,10 @@
 <p>We can comment in R using <code>#</code> then writing the comment. The comment will continue until you enter to the next line.</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>iris <span class="sc">%&gt;%</span> <span class="co"># original object</span></span>
-<span id="cb13-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">length.plus.width =</span> Petal.Width <span class="sc">+</span> Petal.Length) <span class="sc">%&gt;%</span> <span class="co"># make new variable</span></span>
-<span id="cb13-3"><a href=""></a>  <span class="fu">select</span>(Petal.Width, Petal.Length, Species, length.plus.width) <span class="sc">%&gt;%</span> <span class="co"># select variables</span></span>
-<span id="cb13-4"><a href=""></a>  <span class="fu">head</span>() <span class="co"># show first 6 rows </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>iris <span class="sc">%&gt;%</span> <span class="co"># original object</span></span>
+<span id="cb14-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">length.plus.width =</span> Petal.Width <span class="sc">+</span> Petal.Length) <span class="sc">%&gt;%</span> <span class="co"># make new variable</span></span>
+<span id="cb14-3"><a href=""></a>  <span class="fu">select</span>(Petal.Width, Petal.Length, Species, length.plus.width) <span class="sc">%&gt;%</span> <span class="co"># select variables</span></span>
+<span id="cb14-4"><a href=""></a>  <span class="fu">head</span>() <span class="co"># show first 6 rows </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="r-cheat-sheet-for-sas-spss-stata-users" class="slide level2">

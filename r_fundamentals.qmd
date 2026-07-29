@@ -1,7 +1,5 @@
 ---
-format: 
-  revealjs:
-    theme: default
+format: revealjs
 editor: visual
 incremental: true
 ---
@@ -224,6 +222,19 @@ library(dplyr)
 ::: fragment
 **Did you notice**: `install.packages()` needed quotes, but `library()` did not!
 :::
+
+## 5. Packages cont.
+
+A very nifty feature of R is the built-in help window! You can get the documentation for a function in the bottom right R studio helper panel by running:
+
+```{r}
+#| echo: true
+#| eval: false
+
+?mean()
+```
+
+![](r fundamentals pngs/r_helper.png){fig-align="center" width="419"}
 
 ## 6. Syntax Snippets - File Paths
 
