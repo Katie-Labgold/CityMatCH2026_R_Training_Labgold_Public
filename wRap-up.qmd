@@ -1,0 +1,20 @@
+---
+title: "The R-oad Ahead"
+format: revealjs
+editor: visual
+incremental: true
+---
+
+## Wrap Up
+
+## Continuing your R Journey
+
+Complex Survey Data
+
+Regression Models
+
+Spatial Analysis
+
+Interactive Data Dashboards
+
+## Stay in touch!
