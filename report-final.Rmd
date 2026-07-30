@@ -29,9 +29,9 @@ load(here("training_data_files", "clean", "hype_diab_rates.rdata"))
 
 ## Key Findings
 
-  + The number of live births in US Territories increased from `r year.rate20_24[2, 3]` births in 2020 to `r year.rate20_24[6, 3]` births in 2024.  
+  + The number of live births in US Territories decreased from `r year.rate20_24[2, 3]` births in 2020 to `r year.rate20_24[6, 3]` births in 2024.  
   
-  + The preterm birth rate was `r year.rate20_24[6,4]` preterm births per 100 live births in 2024, up from `r year.rate20_24[6,4]` preterm births per 100 live births in 2020.
+  + The preterm birth rate was `r year.rate20_24[6,4]` preterm births per 100 live births in 2024, similar to the rate in 2020 (`r year.rate20_24[6,4]` preterm births per 100 live births).
   
   + Mothers ages `r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_max(preterm_rate_per100) %>% pull(Value)` had the highest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_max(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births), while mothers ages `r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_min(preterm_rate_per100) %>% pull(Value)` had the lowest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% slice_min(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births).
   
@@ -40,96 +40,64 @@ load(here("training_data_files", "clean", "hype_diab_rates.rdata"))
   + The preterm birth rate was higher for mothers with any diabetes and any hypertension, with a rate `r hype.diab.rates %>% filter(Comorbidity == "DIAB.recode") %>% summarise(round(preterm_rate_per100[Reported == "Yes"]/preterm_rate_per100[Reported == "No"], 1)) %>% pull()` and `r hype.diab.rates %>% filter(Comorbidity == "HYPE.recode") %>% summarise(round(preterm_rate_per100[Reported == "Yes"]/preterm_rate_per100[Reported == "No"], 1)) %>% pull()` times the rate for no diabetes and no hypertension, respectively. 
     
 
-## The number of births increased from 2020 to 2024
+## The number of births decreased from 2020 to 2024
 
-The number of live births in US Territories increased from `r year.rate20_24[2, 3]` births in 2020 to `r year.rate20_24[6, 3]` births in 2024.
+The number of live births in US Territories decreased from `r year.rate20_24[2, 3]` births in 2020 to `r year.rate20_24[6, 3]` births in 2024. 
 
 ```{r, echo = F}
-# Start by renaming our preterm birth rate variable to `Preterm Birth Rate Per 100 Live Births`
-# Show the output from each line
-
 year.rate20_24 %>%
   rename("Preterm Births per 100 Live Births" = "preterm_rate_per100") %>%
   flextable() %>%
-  theme_vanilla() %>%               # Applies a clean theme
-  bg(i = 1, bg = "#5B3DB2", part = "header") %>% # Background color for header
+  theme_vanilla() %>%               
+  bg(i = 1, bg = "#5B3DB2", part = "header") %>% 
   color(i = 1, color = "white", part = "header") %>%
-  bold(j = ~ `Birth Year`) %>%             # Bold a specific column
+  bold(j = ~ `Birth Year`) %>%             
   set_caption(caption = "Table 1: Preterm Birth Rates by Year") %>%
   width(j = c("Birth Year", "Preterm Births", "Live Births", "Preterm Births per 100 Live Births"),
         width = c(1.5, 1.2, 1.2, 2)) %>%
-  paginate(init = TRUE) %>% # keeps the rows together (not splitting between pages in word)
-  ### TRY ON YOUR OWN!!!
-  ## try on your own! center the columns
+  paginate(init = TRUE) %>% 
   align(align = "center", part = "all") 
   
-## take a minute to play around with some of the flextable options
-## or try it on your own - look through the documentation to add XXXXX?
-## https://ardata-fr.github.io/flextable-book/static/pdf/cheat_sheet_flextable.pdf
-
 ```
 
 
-## The preterm birth rate increased during 2020 to 2024
+## The preterm birth rate was relatively constant during 2020 to 2024
 
-The preterm birth rate was `r year.rate20_24[6,4]` preterm births per 100 live births in 2024, up from `r year.rate20_24[2,4]` preterm births per 100 live births in 2020.
+The preterm birth rate was `r year.rate20_24[6,4]` preterm births per 100 live births in 2024, similar to the rate in 2020 (`r year.rate20_24[6,4]` preterm births per 100 live births).
 
 The 5-year preterm birth rate for 2020-2024 was `r year.rate20_24[6,1]` preterm births per 100 live births.
 
-```{r fig.width = 7, fig.height = 5, dpi=500, include = F}
-# Start with this
-year.rate20_24 %>%
-  filter(`Birth Year` != "Overall 2020-2024") %>%
-  mutate(`Birth Year` = as.numeric(`Birth Year`)) %>% # ggplot2 wants year to be ordered 
-  ggplot(aes(x = `Birth Year`, y = `preterm_rate_per100`)) +
-          geom_line(size = 1.5, color = "steelblue") +
-          geom_point(size = 3, color = "black") +
-          labs(
-            title = "Figure 1. Preterm Birth Rate per 100 Live Births, U.S. Territories, 2020-2024",
-            x = "Year",
-            y = "Preterm Birth Rate per 100"
-          ) +
-          theme_minimal()
-
-# Clean Up: remove X title (year is obvious, add limits on the y axis to bring to scale,
-# change dot and line colors to match, bold x and y axis tick numbers)
-plot2 <- year.rate20_24 %>%
-  filter(`Birth Year` != "Overall 2020-2024") %>%
-  mutate(`Birth Year` = as.numeric(`Birth Year`)) %>% # ggplot2 wants year to be ordered 
-  ggplot(aes(x = `Birth Year`, y = `preterm_rate_per100`)) +
-          geom_line(size = 1.5, color = "black") +
-          geom_point(size = 3, color = "black") +
-          labs(
-            title = "Figure 1. Preterm Birth Rate per 100 Live Births, U.S. Territories, 2020-2024",
-            x = NULL,
-            y = "Rate per 100 Live Births"
-          ) +
-          theme_minimal() +
-          ylim(0, 15) + # change y-axis limits to range from 0 to 15
-          theme(
-            axis.text = element_text(face = "bold", size = 12),
-            axis.title = element_text(face = "bold", size = 13)
-          )
-
-plot2
-```
-
 ```{r fig.width = 7, fig.height = 5, dpi=500, echo = F, warning = F}
-### What if we want to highlight the 2024 point with different color & text?
-plot2 +
-  geom_point(
-    data = year.rate20_24 %>% filter(`Birth Year` == "2024"),
-    aes(as.numeric(`Birth Year`), preterm_rate_per100),
-    color = "#5B3DB2",
-    size = 3
-  ) +
-  geom_text(
-    data = year.rate20_24 %>% filter(`Birth Year` == "2024"),
-    aes(as.numeric(`Birth Year`), preterm_rate_per100, label = preterm_rate_per100),
-    vjust = -1,
-    color = "#5B3DB2",
-    fontface = "bold"
-  )
+year.rate20_24 %>%
+                  filter(`Birth Year` != "Overall 2020-2024") %>%
+                  mutate(`Birth Year` = as.numeric(`Birth Year`)) %>% 
+                  ggplot(aes(x = `Birth Year`, y = `preterm_rate_per100`)) +
+                          geom_line(size = 1.5, color = "black") + # Change line color to black
+                          geom_point(size = 3, color = "black") +
+                          labs(
+                            title = "Figure 1. Preterm Birth Rate per 100 Live Births, U.S. Territories, 2020-2024",
+                            x = NULL, # Remove X axis title
+                            y = "Rate per 100 Live Births"
+                          ) +
+                          theme_minimal() +
+                          ylim(0, 15) + # Change y-axis limits to range from 0 to 15
+                          theme(
+                            axis.text = element_text(face = "bold", size = 12), # bold axis text
+                            axis.title = element_text(face = "bold", size = 13) # bold axis text
+                          ) +
+                          geom_point( # add a new geom_point
+                          data = year.rate20_24 %>% filter(`Birth Year` == "2024"), # filtered only to 2024
+                          aes(as.numeric(`Birth Year`), preterm_rate_per100), # ensure the birth year is numeric type
+                          color = "#5B3DB2", # specify the color
+                          size = 3 # and point size
+                        ) +
+                        geom_text( # add text
+                          data = year.rate20_24 %>% filter(`Birth Year` == "2024"),
+                          aes(as.numeric(`Birth Year`), preterm_rate_per100, label = preterm_rate_per100),
+                          vjust = -1, # adjusted vertically
+                          color = "#5B3DB2",
+                          fontface = "bold"
+                        )
 
 ```
 
@@ -139,115 +107,13 @@ Mothers ages `r age.raceeth.rates %>% filter(Variable == "MAGER.recode") %>% sli
 
 Mothers reported to be of `r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_max(preterm_rate_per100) %>% pull(Value)` race and ethnicity had the highest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_max(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births), while mothers reported to be of `r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_min(preterm_rate_per100) %>% pull(Value)` race and ethnicity had the lowest preterm birth rate during 2020-2024 (`r age.raceeth.rates %>% filter(Variable == "MRACEHISP.fact") %>% slice_min(preterm_rate_per100) %>% pull(preterm_rate_per100)` per 100 live births). 
 
-```{r include = F}
-# starting just with one variable (maternal age)
-age.raceeth.rates %>%
-      filter(Variable == "MAGER.recode") %>%
-      ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
-            geom_col(position = "dodge") +
-            labs(
-              x = NULL,
-              y = "Rate per 100 Live Births",
-              fill = "Maternal Age"
-            ) +
-            theme_minimal()
-
-# let's make the same adjustments from last time 
-## Change color & add bar border: color resource: https://r-charts.com/colors/
-## bold text
-age.raceeth.rates %>%
-      filter(Variable == "MAGER.recode") %>%
-      ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
-            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
-            labs(
-              x = NULL,
-              y = "Rate per 100 Live Births",
-              fill = "Maternal Age"
-            ) +
-            theme_minimal() +
-            ylim(0, 30) + # change y-axis limits to range from 0 to 30
-            theme(
-                    axis.text = element_text(face = "bold", size = 10),
-                    axis.title = element_text(face = "bold", size = 12)
-                  ) +
-            scale_fill_manual(values = c("lightpink")) 
-
-# Let's drop the legend, and flip the axis so that we can easily read the age groupings
-age.raceeth.rates %>%
-      filter(Variable == "MAGER.recode") %>%
-      ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
-            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
-            labs(
-              x = NULL,
-              y = "Rate per 100 Live Births",
-              fill = "Maternal Age"
-            ) +
-            theme_minimal() +
-            ylim(0, 30) + 
-            theme(
-                    axis.text = element_text(face = "bold", size = 10),
-                    axis.title = element_text(face = "bold", size = 12),
-                    legend.position = "none" # drop legend
-                  ) +
-            scale_fill_manual(values = c("mediumpurple")) +
-            coord_flip() + # flip axis'
-            geom_text(
-                aes(label = preterm_rate_per100),
-                position = position_dodge(width = 0.8),
-                hjust = -0.25,
-                size = 4,
-                fontface = "bold"
-              )
-```
-
-```{r include = F}
-### now make the facet of the two variables
-age.raceeth.rates %>%
-      ####--- removed the filter to age here ----####
-      ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
-            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
-            labs(
-              x = NULL,
-              y = "Rate per 100 Live Births") +
-            theme_minimal() +
-            ylim(0, 30) +
-            theme(
-                axis.text = element_text(face = "bold", size = 10),
-                axis.title = element_text(face = "bold", size = 12),
-                legend.position = "none" # drop legend
-                  ) +
-            scale_fill_manual(values = c("mediumpurple")) +
-            coord_flip() + # flip axis'
-            geom_text(
-                aes(label = preterm_rate_per100),
-                position = position_dodge(width = 0.8),
-                hjust = -0.25,
-                size = 4,
-                fontface = "bold"
-              ) +
-            ####---- Adding the faceting here ----####
-            facet_grid(Variable ~ .,
-                       scales = "free_y", # removes the unused values
-                       switch = "y",
-                       labeller = labeller(
-                         Variable = c(
-                           MAGER.recode = "Maternal Age", 
-                           MRACEHISP.fact = "Maternal Race & Ethnicity")
-                       )
-                       ) +
-            theme(
-              strip.placement = "outside",
-              strip.text = element_text(face = "bold", size = 14)
-            )
-```
-
 ```{r fig.width = 7, fig.height = 7, dpi=500, echo = F, warning = F}
 ### One more step - need to remove the NAs in race/ethnicity!
 age.raceeth.rates %>%
       ####--- removed NAs ----####
       filter(!is.na(Value)) %>%
       ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
-            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
+            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + 
             labs(
               title = "Figure 2. Preterm Birth Rate per 100 Live Births\nby Maternal Age and Maternal Race and Ethnicity, U.S. Territories, 2020-2024",
               x = NULL,
@@ -269,9 +135,8 @@ age.raceeth.rates %>%
                 size = 4,
                 fontface = "bold"
               ) +
-            ####---- Adding the faceting here ----####
             facet_grid(Variable ~ .,
-                       scales = "free_y", # removes the unused values
+                       scales = "free_y", 
                        switch = "y",
                        labeller = labeller(
                          Variable = c(
@@ -282,8 +147,8 @@ age.raceeth.rates %>%
             theme(
               strip.placement = "outside",
               strip.text = element_text(face = "bold", size = 14),
-              plot.title.position = "plot", # this line
-              plot.title = element_text(hjust = 0) # and this line tell R to push the plot title all the way to the left. Try removing it to see the difference.
+              plot.title.position = "plot", 
+              plot.title = element_text(hjust = 0)
             )
 ```
 
@@ -322,14 +187,7 @@ hype.diab.rates %>%
 ```
 
 ```{r fig.width = 7, fig.height = 4, dpi=500, echo = F, warning = F}
-### TRY IT ON YOUR OWN -- adapt the code above to:
-## 1. Make pretty labels for the comorbidity variables: "Any Hypertension" and "Any Diabetes"
-## 2. Change the colors so that "Yes" is purple and "No is grey
-## 3. Add a figure title
-## 4. Change legend position to the right side of the figure
-
 hype.diab.rates %>%
-      # Create a pretty label for the Variable values
       mutate(
         Comorbidity = case_when(
           Comorbidity == "HYPE.recode" ~ "Any Hypertension",
@@ -337,7 +195,7 @@ hype.diab.rates %>%
         )
       ) %>%
       ggplot(aes(x = Comorbidity, y = preterm_rate_per100, group = Reported, fill = Reported)) +
-            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
+            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + 
             labs(
               title = "Figure 3. Preterm Birth Rate per 100 Live Births \nby Any Hypertension and Any Diabetes, U.S. Territories, 2020-2024", # add a title
               x = NULL,
@@ -348,9 +206,9 @@ hype.diab.rates %>%
             theme(
                 axis.text = element_text(face = "bold", size = 10),
                 axis.title = element_text(face = "bold", size = 12),
-                legend.position = "right" # move legend to the right
+                legend.position = "right" 
                   ) +
-            scale_fill_manual(values = c("mediumpurple", "grey50")) + # change colors of bars
+            scale_fill_manual(values = c("mediumpurple", "grey50")) +
             geom_text(
                 aes(label = preterm_rate_per100),
                 position = position_dodge(width = 0.9),
