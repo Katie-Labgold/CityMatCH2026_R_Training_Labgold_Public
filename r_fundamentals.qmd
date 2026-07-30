@@ -234,7 +234,7 @@ A very nifty feature of R is the built-in help window! You can get the documenta
 ?mean()
 ```
 
-![](r fundamentals pngs/r_helper.png){fig-align="center" width="419"}
+![](r%20fundamentals%20pngs/r_helper.png){fig-align="center" width="419"}
 
 ## 6. Syntax Snippets - File Paths
 
