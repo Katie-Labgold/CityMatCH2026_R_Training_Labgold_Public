@@ -1,6 +1,7 @@
 ---
-title: "Guide to Report Creation: U.S. Territory Preterm Births during 2020-2023"
-subtitle: "Prepared by Dr. Katie Labgold"
+title: "Guide to Report Creation" 
+subtitle: "U.S. Territory Preterm Births during 2020-2023"
+author: "Prepared by Dr. Katie Labgold"
 date: "Last updated: `r format(Sys.Date(), '%m/%d/%Y')`"
 output:
   html_document:
@@ -73,24 +74,24 @@ load(here("training_data_files", "clean", "births20to24_basicsummary.rdata"))
 Since we already have a dataframe set up how we would like our data to be viewed, we predominately need to focus on table formatting.
 
 We can start with a simple flextable, similar to what we used during data preparation:
-```{r, eval = F}
-fig.pt3 <- year.rate20_24 %>%
+```{r tbl.pt3 code, eval = F}
+tbl.pt3 <- year.rate20_24 %>%
             rename("Preterm Births per 100 Live Births" = "preterm_rate_per100") %>% # Rename variable 
             flextable() %>%
             theme_vanilla() # Applies a clean theme
 
-fig.pt3
+tbl.pt3
 ```
 
-<button onclick="toggleFig('fig.pt3')">Figure 3.1 Output</button>
-<div id="fig.pt3" style="display:none;">
-```{r, echo = F}
-fig.pt3 <- year.rate20_24 %>%
+<button onclick="toggleFig('tbl.pt3')">Table 3.1 Output</button>
+<div id="tbl.pt3" style="display:none;">
+```{r tbl.pt3 output, echo = F}
+tbl.pt3 <- year.rate20_24 %>%
             rename("Preterm Births per 100 Live Births" = "preterm_rate_per100") %>% # Rename variable 
             flextable() %>%
             theme_vanilla() # Applies a clean theme
 
-fig.pt3
+tbl.pt3
 ```
 </div>
 
@@ -104,29 +105,29 @@ In R, almost anything is possible when it comes to customization. Let's update t
 3. Bold the year column
 4. Add a table caption
 
-<button onclick="toggleFig('fig.pt3_2')">Figure 3.2 Code</button>
-<div id="fig.pt3_2" style="display:none;">
-```{r, eval = F}
-fig.pt3_2 <- fig.pt3 %>%
+<button onclick="toggleFig('tbl.pt3_2')">Table 3.2 Code</button>
+<div id="tbl.pt3_2" style="display:none;">
+```{r tbl.pt3_2 code, eval = F}
+tbl.pt3_2 <- tbl.pt3 %>%
               bg(i = 1, bg = "#5B3DB2", part = "header") %>% # Background color for header
               color(i = 1, color = "white", part = "header") %>% # Header text white
               bold(j = ~ `Birth Year`) %>%             # Bold a specific column
               set_caption(caption = "Table 1: Preterm Birth Rates by Year") # Set table caption
 
-fig.pt3_2
+tbl.pt3_2
 ```
 </div>
 
-<button onclick="toggleFig('fig.pt3_2_output')">Figure 3.2 Output</button>
-<div id="fig.pt3_2_output" style="display:none;">
-```{r, echo = F}
-fig.pt3_2 <- fig.pt3 %>%
+<button onclick="toggleFig('tbl.pt3_2_output')">Table 3.2 Output</button>
+<div id="tbl.pt3_2_output" style="display:none;">
+```{r tbl.pt3_2 output, echo = F}
+tbl.pt3_2 <- tbl.pt3 %>%
               bg(i = 1, bg = "#5B3DB2", part = "header") %>% # Background color for header
               color(i = 1, color = "white", part = "header") %>% # Header text white
               bold(j = ~ `Birth Year`) %>%             # Bold a specific column
               set_caption(caption = "Table 1: Preterm Birth Rates by Year") # Set table caption
 
-fig.pt3_2
+tbl.pt3_2
 ```
 </div>
 
@@ -137,27 +138,27 @@ There is some formatting that will be helpful when it comes to exporting our rep
 
 Here, we add code to format the column widths (*I did this over a few iterations of export to word*) and force the table to stay together rather than splitting across pages.
 
-<button onclick="toggleFig('fig.pt3_3')">Figure 3.3 Code</button>
-<div id="fig.pt3_3" style="display:none;">
-```{r, eval = F}
-fig.pt3_3 <- fig.pt3_2 %>%
+<button onclick="toggleFig('tbl.pt3_3')">Table 3.3 Code</button>
+<div id="tbl.pt3_3" style="display:none;">
+```{r tbl.pt3_3 code, eval = F}
+tbl.pt3_3 <- tbl.pt3_2 %>%
               width(j = c("Birth Year", "Preterm Births", "Live Births", "Preterm Births per 100 Live Births"), # set column widths
                 width = c(1.5, 1.2, 1.2, 2)) %>%
               paginate(init = TRUE) # keeps the rows together (not splitting between pages in word)
 
-fig.pt3_3
+tbl.pt3_3
 ```
 </div>
 
-<button onclick="toggleFig('fig.pt3_3_output')">Figure 3.3 Output</button>
-<div id="fig.pt3_3_output" style="display:none;">
-```{r, echo = F}
-fig.pt3_3 <- fig.pt3_2 %>%
+<button onclick="toggleFig('tbl.pt3_3_output')">Table 3.3 Output</button>
+<div id="tbl.pt3_3_output" style="display:none;">
+```{r tbl.pt3_3 output, echo = F}
+tbl.pt3_3 <- tbl.pt3_2 %>%
               width(j = c("Birth Year", "Preterm Births", "Live Births", "Preterm Births per 100 Live Births"), # set column widths
                 width = c(1.5, 1.2, 1.2, 2)) %>%
               paginate(init = TRUE) # keeps the rows together (not splitting between pages in word)
 
-fig.pt3_3
+tbl.pt3_3
 ```
 </div>
 
@@ -165,23 +166,23 @@ fig.pt3_3
 
 Using the flextable cheat sheet, try adding a code line to center the text of all columns: https://ardata-fr.github.io/flextable-book/static/pdf/cheat_sheet_flextable.pdf
 
-<button onclick="toggleFig('fig.pt3_4')">Figure 3.4 Code</button>
-<div id="fig.pt3_4" style="display:none;">
-```{r, eval = F}
-fig.pt3_4 <- fig.pt3_3 %>%
+<button onclick="toggleFig('tbl.pt3_4')">Table 3.4 Code</button>
+<div id="tbl.pt3_4" style="display:none;">
+```{r fig.pt3_4 code, eval = F}
+tbl.pt3_4 <- tbl.pt3_3 %>%
               align(align = "center", part = "all")
 
-fig.pt3_4
+tbl.pt3_4
 ```
 </div>
 
-<button onclick="toggleFig('fig.pt3_4_output')">Figure 3.4 Output</button>
-<div id="fig.pt3_4_output" style="display:none;">
-```{r, echo = F}
-fig.pt3_4 <- fig.pt3_3 %>%
+<button onclick="toggleFig('tbl.pt3_4_output')">Table 3.4 Output</button>
+<div id="tbl.pt3_4_output" style="display:none;">
+```{r fig.pt3_4 output, echo = F}
+tbl.pt3_4 <- tbl.pt3_3 %>%
               align(align = "center", part = "all")
 
-fig.pt3_4
+tbl.pt3_4
 ```
 </div>
 
@@ -216,8 +217,8 @@ Moving on to our yearly rate line graph, let's start with a simple line plot.
 We still have the `Overall 2020-2024` row in our data, so we'll need to start by filtering that out. We can pipe this directly into the ggplot2() functions!
 
 
-```{r, eval = F}
-fig.pt3.2 <- year.rate20_24 %>%
+```{r fig.pt3 code, eval = F}
+fig.pt3 <- year.rate20_24 %>%
                 filter(`Birth Year` != "Overall 2020-2024") %>% # remove Overall row
                 mutate(`Birth Year` = as.numeric(`Birth Year`)) %>% # ggplot2 wants year to be ordered, so I transform it a numeric type
                 ggplot(aes(x = `Birth Year`, y = `preterm_rate_per100`)) + # aes() is used to stylize aesthetics - specify the x and y axis variables here
@@ -230,13 +231,13 @@ fig.pt3.2 <- year.rate20_24 %>%
                         ) +
                         theme_minimal() # minimal theme
 
-fig.pt3.2
+fig.pt3
 ```
 
-<button onclick="toggleFig('fig.pt3.2_output')">Figure 3 Part 2 Output</button>
-<div id="fig.pt3.2_output" style="display:none;">
-```{r, echo = F, warning = F}
-fig.pt3.2 <- year.rate20_24 %>%
+<button onclick="toggleFig('fig.pt3_output')">Figure 3 Output</button>
+<div id="fig.pt3_output" style="display:none;">
+```{r fig.pt3 output, echo = F, warning = F}
+fig.pt3 <- year.rate20_24 %>%
                 filter(`Birth Year` != "Overall 2020-2024") %>% # remove Overall row
                 mutate(`Birth Year` = as.numeric(`Birth Year`)) %>% # ggplot2 wants year to be ordered, so I transform it a numeric type
                 ggplot(aes(x = `Birth Year`, y = `preterm_rate_per100`)) + # aes() is used to stylize aesthetics - specify the x and y axis variables here
@@ -249,7 +250,7 @@ fig.pt3.2 <- year.rate20_24 %>%
                         ) +
                         theme_minimal() # minimal theme
 
-fig.pt3.2
+fig.pt3
 ```
 </div>
 
@@ -267,10 +268,10 @@ Let's continue to clean up this figure:
 3. Change dot and line colors to match each other
 4. Bold X and Y axis tick numbers for improved readability
 
-<button onclick="toggleFig('fig.pt3.2_2_code')">Figure 3.2 Part 2 Code</button>
-<div id="fig.pt3.2_2_code" style="display:none;">
-```{r, eval = F}
-fig.pt3.2_2 <- year.rate20_24 %>%
+<button onclick="toggleFig('fig.pt3_2_code')">Figure 3.2 Code</button>
+<div id="fig.pt3_2_code" style="display:none;">
+```{r fig.pt3_2 code, eval = F}
+fig.pt3_2 <- year.rate20_24 %>%
                   filter(`Birth Year` != "Overall 2020-2024") %>%
                   mutate(`Birth Year` = as.numeric(`Birth Year`)) %>% 
                   ggplot(aes(x = `Birth Year`, y = `preterm_rate_per100`)) +
@@ -288,14 +289,14 @@ fig.pt3.2_2 <- year.rate20_24 %>%
                             axis.title = element_text(face = "bold", size = 13) # bold axis text
                           )
 
-fig.pt3.2_2
+fig.pt3_2
 ```
 </div>
 
-<button onclick="toggleFig('fig.pt3.2_2_output')">Figure 3.2 Part 2 Output</button>
-<div id="fig.pt3.2_2_output" style="display:none;">
-```{r, echo = F, warning = F}
-fig.pt3.2_2 <- year.rate20_24 %>%
+<button onclick="toggleFig('fig.pt3_2_output')">Figure 3.2 Output</button>
+<div id="fig.pt3_2_output" style="display:none;">
+```{r fig.pt3_2 output, echo = F, warning = F}
+fig.pt3_2 <- year.rate20_24 %>%
                   filter(`Birth Year` != "Overall 2020-2024") %>%
                   mutate(`Birth Year` = as.numeric(`Birth Year`)) %>% 
                   ggplot(aes(x = `Birth Year`, y = `preterm_rate_per100`)) +
@@ -313,7 +314,7 @@ fig.pt3.2_2 <- year.rate20_24 %>%
                             axis.title = element_text(face = "bold", size = 13) # bold axis text
                           )
 
-fig.pt3.2_2
+fig.pt3_2
 ```
 </div>
 
@@ -323,10 +324,10 @@ fig.pt3.2_2
 
 I think it would look really nice to have the 2024 data point highlighted purple, and then add the value above it also in purple. To do this, let's build off of the last plot:
 
-<button onclick="toggleFig('fig.pt3.2_3_code')">Figure 3.3 Part 2 Code</button>
-<div id="fig.pt3.2_3_code" style="display:none;">
-```{r eval = F}
-fig.pt3.2_2 +
+<button onclick="toggleFig('fig.pt3_3_code')">Figure 3.3 Code</button>
+<div id="fig.pt3_3_code" style="display:none;">
+```{r fig.pt3_3 code, eval = F}
+fig.pt3_2 +
     geom_point( # add a new geom_point
     data = year.rate20_24 %>% filter(`Birth Year` == "2024"), # filtered only to 2024
     aes(as.numeric(`Birth Year`), preterm_rate_per100), # ensure the birth year is numeric type
@@ -343,10 +344,10 @@ fig.pt3.2_2 +
 ```
 </div>
 
-<button onclick="toggleFig('fig.pt3.2_3_output')">Figure 3.3 Part 2 Output</button>
-<div id="fig.pt3.2_3_output" style="display:none;">
-```{r echo = F, warning = F}
-fig.pt3.2_2 +
+<button onclick="toggleFig('fig.pt3_3_output')">Figure 3.3 Output</button>
+<div id="fig.pt3_3_output" style="display:none;">
+```{r fig.pt3_3 output, echo = F, warning = F}
+fig.pt3_2 +
     geom_point( # add a new geom_point
     data = year.rate20_24 %>% filter(`Birth Year` == "2024"), # filtered only to 2024
     aes(as.numeric(`Birth Year`), preterm_rate_per100), # ensure the birth year is numeric type
@@ -395,7 +396,7 @@ knitr::include_graphics("r fundamentals pngs/report_pngs/pt_3_2_keyfindings.png"
 
 We will start off by adding our newest data in the `setup` R chunk at the top of the report R Markdown file.
 
-```{r setup, eval = FALSE}
+```{r eval = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 # load packages
@@ -423,7 +424,7 @@ Our end goal is to have both age and race and ethnicity variables be side by sid
 
 Let's start with a simple bar chart of preterm birth rates by maternal age groups:
 
-```{r}
+```{r fig.pt4 code, eval = F}
 fig.pt4 <- age.raceeth.rates %>%
             filter(Variable == "MAGER.recode") %>% # Filter to only the age variable
             ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) + # set variables
@@ -438,14 +439,35 @@ fig.pt4 <- age.raceeth.rates %>%
 fig.pt4
 ```
  
- 
+
+<button onclick="toggleFig('fig.pt4_output')">Figure 4.1 Output</button>
+<div id="fig.pt4_output" style="display:none;">
+```{r fig.pt4 output, echo = F}
+fig.pt4 <- age.raceeth.rates %>%
+            filter(Variable == "MAGER.recode") %>% # Filter to only the age variable
+            ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) + # set variables
+                  geom_col(position = "dodge") + # bar chart, with bars sitting next to each other (dodge)
+                  labs( # basic figure labels
+                    x = NULL,
+                    y = "Rate per 100 Live Births",
+                    fill = "Maternal Age"
+                  ) +
+                  theme_minimal() # basic theme
+
+fig.pt4
+```
+</div>
+
+
 We'll customize using similar features as our last figure:
 
 1. Change bar colors & add border around the bars
 2. Bold axis text
 3. Add Y axis limits
- 
-```{r}
+
+<button onclick="toggleFig('fig.pt4_2_code')">Figure 4.2 Code</button>
+<div id="fig.pt4_2_code" style="display:none;">
+```{r fig.pt4_2 code, eval = F}
 fig.pt4_2 <- age.raceeth.rates %>%
               filter(Variable == "MAGER.recode") %>%
               ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
@@ -465,7 +487,33 @@ fig.pt4_2 <- age.raceeth.rates %>%
 
 fig.pt4_2
 ```
- 
+</div>
+
+<button onclick="toggleFig('fig.pt4_2_output')">Figure 4.2 Output</button>
+<div id="fig.pt4_2_output" style="display:none;">
+```{r fig.pt4_2 output, echo = F}
+fig.pt4_2 <- age.raceeth.rates %>%
+              filter(Variable == "MAGER.recode") %>%
+              ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
+                    geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars (linewidth)
+                    labs(
+                      x = NULL,
+                      y = "Rate per 100 Live Births",
+                      fill = "Maternal Age"
+                    ) +
+                    theme_minimal() +
+                    ylim(0, 30) + # change y-axis limits to range from 0 to 30
+                    theme(
+                            axis.text = element_text(face = "bold", size = 10), # bold axis text
+                            axis.title = element_text(face = "bold", size = 12) # bold axis text
+                          ) +
+                    scale_fill_manual(values = c("mediumpurple")) # change bar color
+
+fig.pt4_2
+```
+</div>
+
+
 <br>
 <br>
 
@@ -474,7 +522,10 @@ We'll now:
 1. Drop the legend
 2. Flip the axis so the bars are horizontal (easier readability!)
 3. Add the rates over each bar
-```{r}
+
+<button onclick="toggleFig('fig.pt4_3_code')">Figure 4.3 Code</button>
+<div id="fig.pt4_3_code" style="display:none;">
+```{r fig.pt4_3 code, eval = F}
 fig.pt4_3 <- age.raceeth.rates %>%
       filter(Variable == "MAGER.recode") %>%
       ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
@@ -504,6 +555,41 @@ fig.pt4_3 <- age.raceeth.rates %>%
 
 fig.pt4_3
 ```
+</div>
+
+<button onclick="toggleFig('fig.pt4_3_output')">Figure 4.3 Output</button>
+<div id="fig.pt4_3_output" style="display:none;">
+```{r fig.pt4_3 output, echo = F}
+fig.pt4_3 <- age.raceeth.rates %>%
+      filter(Variable == "MAGER.recode") %>%
+      ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
+            geom_col(position = "dodge", color = "Black", linewidth = 0.8) +
+            labs(
+              x = NULL,
+              y = "Rate per 100 Live Births",
+              fill = "Maternal Age"
+            ) +
+            theme_minimal() +
+            ylim(0, 30) + 
+            theme(
+                    axis.text = element_text(face = "bold", size = 10),
+                    axis.title = element_text(face = "bold", size = 12),
+                    legend.position = "none" # drop legend
+                  ) +
+            scale_fill_manual(values = c("mediumpurple")) +
+            coord_flip() + # flip axis so bars are horizontal
+            geom_text( # add rates above each bar
+                aes(label = preterm_rate_per100),
+                position = position_dodge(width = 0.8),
+                hjust = -0.25,
+                size = 4,
+                fontface = "bold"
+              )
+
+
+fig.pt4_3
+```
+</div>
 
 <br>
 <br>
@@ -514,7 +600,9 @@ At this point we have a nicely prepared bar chart of maternal age. We now need t
 
 There are many ways to do this, here we'll use facets to have each variable as a panel next to each other.
 
-```{r}
+<button onclick="toggleFig('fig.pt4_4_code')">Figure 4.4 Code</button>
+<div id="fig.pt4_4_code" style="display:none;">
+```{r fig.pt4_4 code, eval = F}
 fig.pt4_4 <- age.raceeth.rates %>%
               ####--- removed the filter to age here ----####
               ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
@@ -555,6 +643,52 @@ fig.pt4_4 <- age.raceeth.rates %>%
 
 fig.pt4_4
 ```
+</div>
+
+<button onclick="toggleFig('fig.pt4_4_output')">Figure 4.4 Output</button>
+<div id="fig.pt4_4_output" style="display:none;">
+```{r fig.pt4_4 output, echo = F}
+fig.pt4_4 <- age.raceeth.rates %>%
+              ####--- removed the filter to age here ----####
+              ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
+                    geom_col(position = "dodge", color = "Black", linewidth = 0.8) + 
+                    labs(
+                      x = NULL,
+                      y = "Rate per 100 Live Births") +
+                    theme_minimal() +
+                    ylim(0, 30) +
+                    theme(
+                        axis.text = element_text(face = "bold", size = 10),
+                        axis.title = element_text(face = "bold", size = 12),
+                        legend.position = "none" # drop legend
+                          ) +
+                    scale_fill_manual(values = c("mediumpurple")) +
+                    coord_flip() + # flip axis'
+                    geom_text(
+                        aes(label = preterm_rate_per100),
+                        position = position_dodge(width = 0.8),
+                        hjust = -0.25,
+                        size = 4,
+                        fontface = "bold"
+                      ) +
+                    ####---- Adding the faceting here ----####
+                    facet_grid(Variable ~ .,
+                               scales = "free_y", # removes the unused values
+                               switch = "y", # put the variable name labels on the left side
+                               labeller = labeller( # make pretty labels for our variable names
+                                 Variable = c(
+                                   MAGER.recode = "Maternal Age", 
+                                   MRACEHISP.fact = "Maternal Race & Ethnicity")
+                               )
+                               ) +
+                    theme(
+                      strip.placement = "outside", # customizes the location of variable names
+                      strip.text = element_text(face = "bold", size = 14) # format variable names
+                    )
+
+fig.pt4_4
+```
+</div>
 
 <br>
 <br>
@@ -565,12 +699,13 @@ The figure looks great! But I noticed we have the missings still for race/ethnic
 
 Adapt the code above to remove the missing values for race/ethnicity.
 
-```{r}
-### One more step - need to remove the NAs in race/ethnicity!
+<button onclick="toggleFig('fig.pt4_5_code')">Figure 4.5 Code</button>
+<div id="fig.pt4_5_code" style="display:none;">
+```{r fig.pt4_5 code, eval = F}
 age.raceeth.rates %>%
-      filter(!is.na(Value)) %>%  # remove NAs
+      filter(!is.na(Value)) %>%  # remove NAs here!
       ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
-            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + # adding border to the bars
+            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + 
             labs(
               title = "Figure 2. Preterm Birth Rate per 100 Live Births\nby Maternal Age and Maternal Race and Ethnicity, U.S. Territories, 2020-2024",
               x = NULL,
@@ -593,7 +728,7 @@ age.raceeth.rates %>%
                 fontface = "bold"
               ) +
             facet_grid(Variable ~ .,
-                       scales = "free_y", # removes the unused values
+                       scales = "free_y", 
                        switch = "y",
                        labeller = labeller(
                          Variable = c(
@@ -604,11 +739,59 @@ age.raceeth.rates %>%
             theme(
               strip.placement = "outside",
               strip.text = element_text(face = "bold", size = 14),
-              plot.title.position = "plot", # this line
-              plot.title = element_text(hjust = 0) # and this line tell R to push the plot title all the way to the left. Try removing it to see the difference.
+              plot.title.position = "plot", 
+              plot.title = element_text(hjust = 0) 
             )
 
 ```
+</div>
+
+<button onclick="toggleFig('fig.pt4_5_output')">Figure 4.5 Output</button>
+<div id="fig.pt4_5_output" style="display:none;">
+```{r fig.pt4_5 output, echo = F}
+age.raceeth.rates %>%
+      filter(!is.na(Value)) %>%  # remove NAs here!
+      ggplot(aes(x = Value, y = preterm_rate_per100, fill = "Variable")) +
+            geom_col(position = "dodge", color = "Black", linewidth = 0.8) + 
+            labs(
+              title = "Figure 2. Preterm Birth Rate per 100 Live Births\nby Maternal Age and Maternal Race and Ethnicity, U.S. Territories, 2020-2024",
+              x = NULL,
+              y = "Rate per 100 Live Births"
+            ) +
+            theme_minimal() +
+            ylim(0, 30) +
+            theme(
+                axis.text = element_text(face = "bold", size = 10),
+                axis.title = element_text(face = "bold", size = 12),
+                legend.position = "none" # drop legend
+                  ) +
+            scale_fill_manual(values = c("mediumpurple")) +
+            coord_flip() + # flip axis'
+            geom_text(
+                aes(label = preterm_rate_per100),
+                position = position_dodge(width = 0.8),
+                hjust = -0.25,
+                size = 4,
+                fontface = "bold"
+              ) +
+            facet_grid(Variable ~ .,
+                       scales = "free_y", 
+                       switch = "y",
+                       labeller = labeller(
+                         Variable = c(
+                           MAGER.recode = "Maternal Age", 
+                           MRACEHISP.fact = "Maternal Race/Ethnicity")
+                       )
+                       ) +
+            theme(
+              strip.placement = "outside",
+              strip.text = element_text(face = "bold", size = 14),
+              plot.title.position = "plot", 
+              plot.title = element_text(hjust = 0) 
+            )
+
+```
+</div>
 
 <br>
 <br>
