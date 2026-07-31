@@ -1,12 +1,14 @@
 ---
-title: "Guide to Report Creation" 
-subtitle: "U.S. Territory Preterm Births during 2020-2023"
+title: "U.S. Territory Preterm Births during 2020-2023"
 author: "Prepared by Dr. Katie Labgold"
 date: "Last updated: `r format(Sys.Date(), '%m/%d/%Y')`"
 output:
   html_document:
     toc: true
     toc_float: true
+    css: "custom.css"
+    theme: cosmo
+    highlight: tango
 ---
 
 <script>
@@ -210,6 +212,7 @@ Notice the text in blue! That is in-text R code that we can build into the summa
 <br>
 <br>
 
+
 ## Yearly Rate Line Graph
 
 Moving on to our yearly rate line graph, let's start with a simple line plot. 
@@ -254,8 +257,11 @@ fig.pt3
 ```
 </div>
 
+<br>
+<br>
+
 <div class="alert alert-info">
-Notice that R data preparation steps use the `%>%` but ggplot2 steps build with `+`!
+Notice that R data preparation steps use the %>% but ggplot2 steps build with +!
 </div>
 
 <br>
@@ -388,7 +394,7 @@ knitr::include_graphics("r fundamentals pngs/report_pngs/pt_3_2_keyfindings.png"
 <br>
 <br>
 
-<div class="alert alert-danger">
+<div class="alert alert-info">
 <strong>Break!</strong> After the break, we'll start back up in the data_prep R Markdown file!
 </div>
 
