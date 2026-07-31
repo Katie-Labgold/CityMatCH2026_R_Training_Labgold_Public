@@ -5,16 +5,106 @@ editor: visual
 incremental: true
 ---
 
-## Wrap Up
+## 0. Wrap Up
 
-## Continuing your R Journey
+## 1. Continuing your R Journey
 
-Complex Survey Data
+- Regression Models
 
-Regression Models
+- Complex Survey Data
 
-Spatial Analysis
+- Spatial Analysis
 
-Interactive Data Dashboards
+- Interactive Data Dashboards
 
-## Stay in touch!
+- Other uses?
+
+## 2. Regression Models
+
+R has a standard formula syntax:
+
+```{r}
+#| echo: true
+#| eval: false
+
+y ~ x1 + x2 + x1*x2 + log(x)
+```
+
+## Key Differences
+
+- No class statement - categorical variables must be coded as factors!
+
+- Model output is an object (classic R!)
+
+- You extract results with functions
+
+## Logistic Regression Example
+
+show model, show output, extract output
+
+## 3. Complex Survey Data
+
+In other stats programs, the survey design is baked into the procedure.
+
+In R, we have to create a survey design object first, then pass that to any summary/modeling functions.
+
+```{r}
+#| echo: true 
+#| eval: false  
+
+library(survey) # Classic survey package for R  
+
+new.survey.object <- svydesign(   
+                        ids = ~psu, #ids - primary sampling unit variable 
+                        strata = ~strata, # strata  
+                        weights = ~weight, # sampling weight   
+                        nest = TRUE # true if PSUs are nested within strata
+                      )
+```
+
+Commonly used functions in the `survey` package:
+
+- `svymean()`
+
+- `svytable()`
+
+- `svyciprop()`
+
+- `svyglm()` :
+
+- `svycontrast()` :
+
+- `subset()`
+
+## 4. Spatial Analysis
+
+R is a phenomenal tool for mapping and spatial analysis!
+
+- Data manipulation: read/write ESRI shapefiles, prepare R spatial objects (`sf`, `sp`), geocoding[^1]
+
+- Data visualization: choropleth, points, density
+
+- Spatial statistics: hotspots, point pattern analysis, modeling, bayesian methods
+
+[^1]: requires local configuration to protect PHI
+
+::: fragment
+**Key packages to get started**[^2]: `sf`, `tmap`, `ggplot2`
+:::
+
+[^2]:
+    ::: fragment
+    Columbia University has a nice summary of [available tools](https://guides.library.columbia.edu/geotools/R)
+    :::
+
+## 5. Interactive Data Dashboards
+
+You can use R and [R Shiny](https://rstudio.github.io/shinydashboard/) to develop custom interactive data dashboards that have a complete workflow within the R universe.
+
+<br>
+
+Real-World Application: [Virgin Islands Epidemiology Data Dashboard](https://usvi-doh.shinyapps.io/EpiDashboard/)
+
+## 6. Generally useful resources
+
+## 7. Stay in touch!
