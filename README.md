@@ -1,4 +1,4 @@
-# CityMatCH2026_R_Training_Labgold {PRIVATE VERSION - ALL FILES}
+# CityMatCH2026_R_Training_Labgold
 
 This repository contains files for the CityMatCH 2026 **R for Applied MCH Epidemiologists** Training led by Dr. Katie Labgold on Sunday, September 20th, 2026.
 
