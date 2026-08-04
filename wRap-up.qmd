@@ -1,11 +1,51 @@
 ---
 title: "The R-oad Ahead"
-format: revealjs
+author: "Katie Labgold, PhD, MPH"
 editor: visual
 incremental: true
+format: 
+  revealjs:
+    scrollable: true
+    highlight-style: github
+    css: quarto_css.css
 ---
 
+```{r}
+#| echo: false
+#| messages: false
+
+
+library(here)
+library(dplyr)
+library(haven)
+
+
+load(here("training_data_files/clean/births20to24_final.RData"))
+
+# survey example
+# Load Data
+nsch2024 <- read_sas("vitalstats_raw_datafiles/NSCH2024/nsch_2024e_topical.sas7bdat") %>%
+              mutate(DIABETES.fact = factor(DIABETES,
+                                            levels = c(1,2),
+                                            labels = c("Yes", "No")),
+                     DEPRESSION.fact = factor(K2Q32A,
+                                              levels = c(1,2),
+                                              labels = c("Yes", "No")),
+                     ADHD.fact = factor(K2Q31A,
+                                              levels = c(1,2),
+                                              labels = c("Yes", "No")),
+                     ANXIETY.fact = factor(K2Q33A,
+                                              levels = c(1,2),
+                                              labels = c("Yes", "No"))
+                     )
+
+```
+
 ## 0. Wrap Up
+
+In just a few hours, you created a standalone report ready to share with your team for internal review!
+
+![](r%20fundamentals%20pngs/Utkarsh%20Ambudkar%20Reaction%20GIF%20by%20CBS.gif){fig-align="center"}
 
 ## 1. Continuing your R Journey
 
@@ -21,13 +61,17 @@ incremental: true
 
 ## 2. Regression Models
 
+<br>
+
 R has a standard formula syntax:
+
+<br>
 
 ```{r}
 #| echo: true
 #| eval: false
 
-y ~ x1 + x2 + x1*x2 + log(x)
+y ~ x1 + x2 + x3*x4 + log(x5)
 ```
 
 ## Key Differences
@@ -40,9 +84,77 @@ y ~ x1 + x2 + x1*x2 + log(x)
 
 ## Logistic Regression Example
 
-show model, show output, extract output
+Generalized linear models can be run in R using `glm()` and then specificying the appropriate family.
 
-## 3. Complex Survey Data
+<br>
+
+Below is an example for a logistic regression using our data:
+
+<br>
+
+```{r}
+#| echo: true
+
+model <- glm(OEGest_R3.fact ~ HYPE.recode + DIAB.recode, # model formula
+             data = births20to24.final, # model data
+             family = binomial(link = "logit")) # model family - here for logistic reg
+
+```
+
+## Logistic Regression Example - Output Structure
+
+Model class type is glm:
+
+<br>
+
+```{r}
+#| echo: true
+
+class(model)
+
+```
+
+## Logistic Regression Example - Output Structure
+
+And information is stored in this structure, which tells us how to extract the output:
+
+<br>
+
+```{r}
+#| echo: true
+
+
+str(model)
+```
+
+## Logistic Regression Example - Extracting Output
+
+<br>
+
+General summary of model output:
+
+```{r}
+#| echo: true
+
+model
+
+```
+
+## Logistic Regression Example - Extracting Output
+
+To obtain the OR and 95% CI, we can exponentiate the coefficients and 95% CI:
+
+<br>
+
+```{r}
+#| echo: true
+
+exp(model$coefficients) # exponentiated to obtain OR!
+exp(confint(model)) # obtain the 95% CI
+
+```
+
+## 3. Complex Survey Data  
 
 In other stats programs, the survey design is baked into the procedure.
 
@@ -56,46 +168,197 @@ library(survey) # Classic survey package for R
 
 new.survey.object <- svydesign(   
                         ids = ~psu, #ids - primary sampling unit variable 
-                        strata = ~strata, # strata  
+                        strata = ~strata, # sampling strata - set to NULL if N/A
                         weights = ~weight, # sampling weight   
                         nest = TRUE # true if PSUs are nested within strata
                       )
 ```
 
-Commonly used functions in the `survey` package:
+## Create survey design object - NSCH
 
-- `svymean()`
+```{r}
+#| echo: true
+#| messages: false
 
-- `svytable()`
+library(survey)
 
-- `svyciprop()`
+# Create survey object
+design_nsch24 <- svydesign(
+                    ids = ~HHID, # household id
+                    strata = ~STRATUM, # sampling strata variable
+                    weights = ~FWC, # weight variable
+                    data = nsch2024, # data with CLEANED variables!
+                    nest = TRUE # nested design
+)
 
-- `svyglm()` :
+# View class type
+class(design_nsch24)
+```
 
-- `svycontrast()` :
+## Survey functions: `svymean()` + `svyciprop()`
 
-- `subset()`
+`svymean()` will show the percentages of each group:
+
+```{r}
+#| echo: true
+
+svymean(~ADHD.fact, # variable
+        design_nsch24, # design object
+        na.rm = TRUE) # necessary if need to remove any missing values
+```
+
+<br>
+
+`svyciprop()` for showing the prevalence of a binary indicator:
+
+```{r}
+#| echo: true
+
+svyciprop(~ADHD.fact, # variable
+           design_nsch24) # design object
+```
+
+## Survey functions: `svytable()`
+
+`svytable()` for showing weighted cross-tabs:
+
+```{r}
+#| echo: true
+
+# Weighted cross-tab (counts)
+tab <- svytable(~ADHD.fact + ANXIETY.fact,
+         design_nsch24)
+
+tab
+
+# Weighted Row Proportions
+prop.table(tab, margin = 1) # within ADHD.fact
+
+# Weighted Column Proportions
+prop.table(tab, margin = 2) # within ANXIETY.fact
+
+```
+
+## Survey functions: `subset()` + `svyglm()`
+
+`subset()` can be used to subset your design object to certain conditions, while `svyglm()` can be used for survey-weighted glms:
+
+```{r}
+#| echo: true
+
+# Subset to insured
+design_nsch24.insure <- subset(design_nsch24, CURRINS == 1)
+
+# Logistic regression of ADHD.fact on ANXIETY.fact
+model.wt <- svyglm(
+            ADHD.fact ~ ANXIETY.fact, # formula
+            design = design_nsch24.insure,
+            family = quasibinomial()
+)
+
+# View and extract the model object like you would with a regular glm()!
+summary(model.wt)
+
+exp(model.wt$coefficients)
+exp(confint(model.wt))
+```
+
+<br>
+
+::: callout-tip
+`svycontrast()` can be used for custom contrast statements!
+:::
 
 ## 4. Spatial Analysis
 
 R is a phenomenal tool for mapping and spatial analysis!
 
-- Data manipulation: read/write ESRI shapefiles, prepare R spatial objects (`sf`, `sp`), geocoding[^1]
+- Data manipulation: read/write ESRI shapefiles, prepare R spatial objects (`sf`, `sp`), geocoding\*
 
 - Data visualization: choropleth, points, density
 
 - Spatial statistics: hotspots, point pattern analysis, modeling, bayesian methods
 
-[^1]: requires local configuration to protect PHI
+## Loading spatial data into R
 
-::: fragment
-**Key packages to get started**[^2]: `sf`, `tmap`, `ggplot2`
-:::
+`sf` package: loading shapefile data as a spatial `sf` class:
 
-[^2]:
-    ::: fragment
-    Columbia University has a nice summary of [available tools](https://guides.library.columbia.edu/geotools/R)
-    :::
+```{r}
+#| echo: true 
+
+# sf package
+library(sf)
+
+# load ESRI shapefile (.shp) into R as an sf class
+usvi.sf <- sf::read_sf("r fundamentals pngs/2020 Subdistrict/tl_2020_78_cousub.shp")
+
+# check class
+class(usvi.sf)
+```
+
+## Basic choropleth mapping
+
+`tmap`: basic mapping of polygons and points
+
+```{r}
+#| echo: true 
+#| warning: false 
+
+# tmap package
+library(tmap)
+
+# basic choropleth map
+tm_shape(usvi.sf) + # sf object
+  tm_polygons("ALAND") # polygon of "variable"
+  
+
+```
+
+## Basic choropleth mapping cont.
+
+Like we did with our report figures, we can customize further:
+
+```{r}
+#| echo: true 
+#| warning: false 
+#| eval: false
+
+# basic choropleth map w/ customization
+usvi.sf %>% # sf object
+  filter(NAMELSAD != "Island subdivision not defined") %>% # removing the empty geometry
+  tm_shape() + # specify tmap object
+  tm_polygons("ALAND", # polygon of "variable"
+              palette = "Purples", # change color
+              n = 6, # specify number breaks
+              border.col = "darkgrey" # add a border
+              ) +  
+  tm_layout(main.title = "My Map", #  add a map title
+            main.title.position = c("center"),
+            frame = FALSE # remove border of map
+            ) 
+
+```
+
+## Basic choropleth mapping cont.
+
+```{r}
+#| echo: false
+#| warning: false 
+
+# basic choropleth map w/ customization
+usvi.sf %>% # sf object
+  filter(NAMELSAD != "Island subdivision not defined") %>% # removing the empty geometry
+  tm_shape() + # specify tmap object
+  tm_polygons("ALAND", # polygon of "variable"
+              palette = "Purples", # change color
+              n = 6, # specify number breaks
+              border.col = "darkgrey" # add a border
+              ) +  
+  tm_layout(main.title = "My Map", #  add a map title
+            main.title.position = c("center"),
+            frame = FALSE # remove border of map
+            ) 
+```
 
 ## 5. Interactive Data Dashboards
 
@@ -106,5 +369,15 @@ You can use R and [R Shiny](https://rstudio.github.io/shinydashboard/) to develo
 Real-World Application: [Virgin Islands Epidemiology Data Dashboard](https://usvi-doh.shinyapps.io/EpiDashboard/)
 
 ## 6. Generally useful resources
+
+- [R for Data Science](https://r4ds.hadley.nz/)
+
+- [The Epidemiologist R Handbook](https://www.epirhandbook.com/en/)
+
+- R package vignettes & help function
+
+- Stack Exchange
+
+- AI tools (*with the classic caveat of – be cautious + double check your understanding!*)
 
 ## 7. Stay in touch!
