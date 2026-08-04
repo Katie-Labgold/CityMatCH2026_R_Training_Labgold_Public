@@ -1,7 +1,11 @@
 ---
-format: revealjs
 editor: visual
 incremental: true
+format: 
+  revealjs:
+    scrollable: true
+    highlight-style: github
+    css: quarto_css.css
 ---
 
 ## Welcome to R for Applied MCH Epidemiologists!
@@ -366,10 +370,6 @@ Throughout the day, you can reference this cheat sheet to build intuition about 
 
 ## 10. Questions?
 
-<br>
-
-That should be enough to get us started! Any questions before we dive in?
-
-<br>
+![](r fundamentals pngs/Abbott Thats How Its Done GIF by ABC Network.gif){fig-align="center"}
 
 **P.S. did I mention this presentation was made exclusively in R?**
