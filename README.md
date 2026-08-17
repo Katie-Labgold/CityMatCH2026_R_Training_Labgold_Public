@@ -13,6 +13,7 @@ This repository contains files for the CityMatCH 2026 **R for Applied MCH Epidem
    + ggplot2
    + rio
    + tidyr
+   + haven
 4. Ensure you have computer permissions available to install software (specifically for R packages).
 5. Download and save course materials from home GitHub page by clicking the green `code` button and selecting `download zip`.
 
