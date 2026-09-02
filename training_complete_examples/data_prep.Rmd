@@ -14,6 +14,7 @@ library(here)
 library(dplyr)
 library(tidyr)
 library(flextable)
+library(haven)
 ```
 
 # Overview
@@ -24,6 +25,8 @@ This document is split into 2 parts:
 
 1. Preparing the analytic data set
 2. Preparing the report summaries
+
+**Note**: It is essential to use the same object and variable names as I specify in the instructions, to ensure your document works as we move from one task to another!
 
 # Part 1. Preparing our analytic data set
 
@@ -58,7 +61,7 @@ We are using the *here* package to standardize file paths from our project folde
 
 After running the above code chunk, we should now see two objects (both data frames) for the datasets we loaded in our environment window. In the environment window we can also see the number of observations and the number of variables in each object.
 
-### Try it on your own!
+### Try it on your own! (3 min)
 
 Create two objects, one named *demographic.24* that pulls in the 2024 births data demographic variables sheet, and one named *clinical.24* that pulls in the 2024 births data clinical variables sheet.
 
@@ -83,18 +86,16 @@ For general awareness, R can load many other data types such as:
 - R files (.RData, .Rda, Rds)
 
 
-### Try it on your own!
+We can read about the haven package, which can be used for loading SAS, SPSS, and STATA files: https://haven.tidyverse.org/
 
-Take a minute to first read about the haven package, which can be used for loading SAS, SPSS, and STATA files: https://haven.tidyverse.org/
-
-Then use the help function (*?*) below to explore the function that loads data from your typical statistical analysis software package (e.g., SAS, SPSS, STATA).
+Then use the help function (*?function()*) below to explore the function that loads data from your typical statistical analysis software package (e.g., SAS, SPSS, STATA).
 
 ```{r, eval = FALSE}
 # SAS
-?haven::read_sas()
+?read_sas()
 
 # SPSS
-?haven::read_spss()
+?read_spss()
 
 # STATA
 ?haven::read_stata()
@@ -143,8 +144,8 @@ class(demographic.18to23$DOB_YY)
 table(demographic.18to23$DOB_YY, useNA = "always") # useNA = "always" tells the table to include a count for any NA-type missings
 
 # Crosstab
-table("Year" = demographic.18to23$DOB_YY, # Display and label rows as year
-      "Race & Ethnicity" = demographic.18to23$MRACEHISP, # Display and label columns as race/ethnicity groups
+table("Age" = demographic.18to23$MAGER, # Display and label rows as age
+      "Year" = demographic.18to23$DOB_YY, # Display and label columns as year
       useNA = "always") # show R recognized missings
 
 # Can also count missing values using is.na() nested in sum()
@@ -152,7 +153,7 @@ sum(is.na(demographic.18to23$DOB_YY))
 ```
 
 
-### Try it on your own!
+### Try it on your own! (5 min)
 
 Explore the remaining three objects to get a sense of data structure.
 
@@ -182,13 +183,14 @@ You can read about other join types in R here: https://dplyr.tidyverse.org/refer
 births18to23 <- demographic.18to23 %>% # x
                   left_join(clinical.18to23, # y
                             by = c("id")) # shared id to join on 
-# if the id name is not the same across data frames, we would instead use `by = c("id.x" = "id.y") 
-
+# if the id name is not the same across data frames, we would instead use `by = c("id.x" = "id.y") where id.x is the id variable name is the X dataframe, and id.y is the id variable name in the Y dataframe
 ```
 
-### Try it on your own!
+### Try it on your own! (8 min)
 
 Create a new object named *births24* using a left_join from the demographic and clinical 2024 birth files.
+
+**Hint:** check the ID names before joining!
 
 ```{r}
 births24 <- demographic.24 %>%
@@ -205,17 +207,16 @@ names(births24)
 # confirm values in first few rows
 head(births24)
 
-
-
+# check if any missing values
+sum(is.na(clinical.24$OEGest_R3))
+sum(is.na(births24$OEGest_R3))
 ```
-
-
 
 ## 4. Rowbind Data
 
 Now to have one working data frame, we need to rowbind the 2018-2023 and 2024 data frames. As with most tasks in R, there are many functions available to do this. I tend to recommend the *bind_rows()* function from the *dplyr* package, since it (A) will automatically align columns -- i.e. you don't have to have them all in the same order already for each data frame -- and (B) it will fill in missing columns with the proper missing variable type.
 
-### Try it on your own!
+### Try it on your own! (8 min)
 
 Using the R help function for *dplyr::bind_rows()* to understand how to row bind *births18to23* and *births24*. Name the new object *births18to24*. After making the new object, explore it to ensure the operation worked as intended.
 
@@ -265,63 +266,33 @@ A couple of things to note about the above code. In R, we use the logical *==* f
 
 You'll also notice that the years in a list denoted by *c()* and the years are in quoted. Quotes are needed because the year is a variable of character class type.
 
-### Try it on your own!
 
-What would it look like to filter only to 2020? Create a dummy object named *births2020* that is only 2020 births.
-
-```{r}
-# Option 1: using ==
-births2020 <- births18to24 %>%
-                filter(DOB_YY == "2020")
-
-# Option 2: using %in%
-births2020 <- births18to24 %>%
-                filter(DOB_YY %in% c("2020")) # Can still use %in% for a list of 1!
-```
-
-
-### Try it on your own!
+### Try it on your own! (8 min)
 
 **Perform task #2** 
 
-Filter to births with gestational age data available [*OEGest_R3* value of 1 or 2]. Name the new object *births18to24_step5*.
+Filter to births with gestational age data available [*OEGest_R3* value of 1 or 2]. Name the new object *births20to24_step5*.
 
-**Hint:** The negative of *==* is *!=*.
+**Hint:** You can either use the coding options for inclusion (i.e., *%in%*), or the opposite for exclusion (i.e., Negative of *==* is *!=*).
 
 ```{r}
 class(births20to24$OEGest_R3) # numeric - will NOT need quotes!
 
+# Option #1: use %in% for list of numbers 
+births20to24_step5 <- births20to24 %>%
+                        filter(OEGest_R3 %in% c(1,2))
+
+# Option #2: use anti-selection
 births20to24_step5 <- births20to24 %>%
                         filter(OEGest_R3 != 3) 
-                          
+
+# check table
 table(births20to24_step5$OEGest_R3, useNA = "always")                             
-
-
-```
-
-As a bonus, we could filter using the opposite of *%in%*. Let's use the dummy object *births2020* as an example.
-
-We can create this using the built-in R function *Negate()*. Just one more great example of how flexible R is! 
-
-```{r}
-`%notin%` <- Negate(`%in%`) # create a new operation that is the negative of %in%
-
-births2020 <- births2020 %>%
-                filter(OEGest_R3 %notin% c(3)) # filter to gestational age not in 3
-
-table(births2020$OEGest_R3, useNA = "always")              
-```
-
-
-Let's now remove *births2020* from the environment because it was just for practice!
-
-```{r}
-rm(births2020)
 ```
 
 ## 6. Coding Missing Values
 
-*MRACEHISP* and *DMETH_REC* both have one value that is unknown/missing. 
+Maternal race and ethncity (*MRACEHISP*) and Delivery Method (*DMETH_REC*) both have one value that is unknown/missing. 
 
 | **MRACEHISP** | **Label**             |
 | :---          | :---                  | 
@@ -360,7 +331,7 @@ class(births20to24_step5$MRACEHISP)
 
 # make new variable with NA_character_
 births20to24_step6 <- births20to24_step5 %>%
-                        mutate(MRACEHISP.na = ifelse(MRACEHISP == 8, NA_character_, MRACEHISP))
+                        mutate(MRACEHISP.na = ifelse(MRACEHISP == "8", NA_character_, MRACEHISP))
 # If MRACEHISP == 8, code as NA, otherwise keep the value of MRACEHISP
 
 ### CODE CHECKS!
@@ -374,7 +345,7 @@ table(mracehisp = births20to24_step6$MRACEHISP,
 ```
 
 
-### Try it on your own!
+### Try it on your own! (10 min)
 
 Create a new object *births20to24_step6.pt2* from *births20to24_step6* to create a new variable *DMETH_REC.na* using the *mutate()* and *ifelse()* functions to recode the missing values to the appropriate NA class.
 
@@ -385,7 +356,7 @@ class(births20to24_step6$DMETH_REC)
 # make new variable with NA_real_
 births20to24_step6.pt2 <- births20to24_step6 %>%
                             mutate(DMETH_REC.na = ifelse(DMETH_REC == 9, # If DMETH_REC == 9,
-                                                         NA_character_, # code as NA type
+                                                         NA_real_, # code as NA type
                                                          DMETH_REC)) # otherwise keep value of DMETH_REC
 
 ### CODE CHECKS!
@@ -412,10 +383,11 @@ We've already talked about R class types, of which have the following functions 
 
 In our data, we will want to change the following variable class types so that R will recognize them in the way we plan to use them in our analysis:
 
-* *MAGER*: character --> integer
-* *MRACEHISP.na*: character --> factor
-* *DMETH_REC.na*: numeric --> factor
 * *OEGest_R3*: numeric --> factor
+* *MRACEHISP.na*: character --> factor
+* *MAGER*: character --> integer
+* *DMETH_REC.na*: numeric --> factor
+
 
 To do this, we will make a new variable for each of the above using the appropriate class function.
 
@@ -435,25 +407,42 @@ levels(births20to24_step7$OEGest_R3.fact)
 table(births20to24_step7$OEGest_R3.fact, useNA = "always")
 ```
 
+We'll do a similar step for maternal race and ethnicity. Note that the R recognized missing value does not need to be included in the levels or labels lists.
 
-### Try it on your own!
+```{r}
+births20to24_step7 <- births20to24_step7 %>%
+                          mutate(
+                             # MRACEHISP.na as factor variable
+                             MRACEHISP.fact = factor(
+                                            MRACEHISP.na, # original variable
+                                            levels = c("1", "2", "3", "4", "5", "6", "7"), # list of values with quotes because character type. Does not include NA!
+                                            labels = c(
+                                              "Non-Hispanic White", 
+                                              "Non-Hispanic Black",
+                                              "Non-Hispanic American Indian and Alaska Native",
+                                              "Non-Hispanic Asian",
+                                              "Non-Hispanic Native Hawaiian and Other Pacific Islander",
+                                              "Non-Hispanic Multiple Races",
+                                              "Hispanic"
+                                            ) #labels matching order of levels
+                                          )
+                          )
 
-Create a new object named *births20to24_step7.pt2* from *births20to24_step7* with new variables for *MAGER*, *MRACEHISP.na*, and *DMETH_REC.na*.
+# Race and Ethnicity ----
+class(births20to24_step7$MRACEHISP.fact)
+levels(births20to24_step7$MRACEHISP.fact)
+## table(births20to24_step7$MRACEHISP.fact, useNA = "always")
 
-Name the variables so that the *.na* will now end in *.fact* for factor types (i.e. *MRACEHISP.fact*) and *.int* for integer types (i.e. *MAGER.int*). Keep "Non-Hispanic White" and "Vaginal" as the reference values.
+```
 
-Recall, the two factor variables currently have the following levels:
+### Try it on your own! (8 min)
 
-| **MRACEHISP.na** | **Label**             |
-| :---             | :---                  | 
-| 1                | Non-Hispanic White    |
-| 2                | Non-Hispanic Black    |
-| 3                | Non-Hispanic American Indian and Alaska Native    |
-| 4                | Non-Hispanic Asian    |
-| 5                | Non-Hispanic Native Hawaiian and Other Pacific Islander   |
-| 6                | Non-Hispanic Multiple Races   |
-| 7                | Hispanic              |
-| 8                | Missing               |
+Create a new object named *births20to24_step7.pt2* from *births20to24_step7* with new variables for *MAGER* and *DMETH_REC.na*.
+
+Name the new maternal age variable as *MAGER.int*, and the new delivery type variable as *DMETH_REC.fact*. The reference category for delivery type should be "Vaginal".
+
+
+Recall, that delivery type has the following levels:
 
 | **DMETH_REC.na** | **Label**             |
 | :---             | :---                  | 
@@ -476,20 +465,7 @@ births20to24_step7.pt2 <- births20to24_step7 %>%
                            mutate(
                              # MAGER as integer variable
                              MAGER.int = as.integer(MAGER),
-                             # MRACEHISP.na as factor variable
-                             MRACEHISP.fact = factor(
-                                            MRACEHISP.na, # original variable
-                                            levels = c("1", "2", "3", "4", "5", "6", "7"), # list of values with quotes because character type. Does not include NA!
-                                            labels = c(
-                                              "Non-Hispanic White", 
-                                              "Non-Hispanic Black",
-                                              "Non-Hispanic American Indian and Alaska Native",
-                                              "Non-Hispanic Asian",
-                                              "Non-Hispanic Native Hawaiian and Other Pacific Islander",
-                                              "Non-Hispanic Multiple Races",
-                                              "Hispanic"
-                                            ) #labels matching order of levels
-                                          ),
+
                              # DMETH_REC.na as factor variable
                              DMETH_REC.fact = factor(
                                               DMETH_REC.na, # original variable
@@ -508,10 +484,7 @@ class(births20to24_step7.pt2$MAGER.int)
 range(births20to24_step7.pt2$MAGER.int)
 ## table(births20to24_step7.pt2$MAGER.int, useNA = "always") 
 
-# Race and Ethnicity ----
-class(births20to24_step7.pt2$MRACEHISP.fact)
-levels(births20to24_step7.pt2$MRACEHISP.fact)
-## table(births20to24_step7.pt2$MRACEHISP.fact, useNA = "always")
+
 
 # Delivery Method ----
 class(births20to24_step7.pt2$DMETH_REC.fact)
@@ -520,7 +493,7 @@ levels(births20to24_step7.pt2$DMETH_REC.fact)
 
 ```
 
-### Try it on your own!
+**Clean out your environment!**
 
 Let's now remove *births20to24*, *births20to24_step5*, *births20to24_step6*, *births20to24_step6.pt2*, *births20to24_step7* from the environment to clean up our workspace. 
 
@@ -573,18 +546,52 @@ births20to24_step8 %>%
 
 ```
 
-### Try it on your own!
-
-Create a new object named *births20to24_step8.pt2* from *births20to24_step8*. Create the new recoded variable for any hypertension and the 10-year age category variables using *mutate()* and *case_when()*. Don't forget to transform them into factor variables named *HYPE.recode.fact* and *MAGER.recode.fact*!
-
+We will run similar code for hypertension:
 
 **Any Hypertension**
 
-| **HYPE.recode**     | **RF_PHYPE & RF_GHYPE & RF_EHYP**                    |
-| :---                | :---                              |
+| **HYPE.recode**     | **RF_PHYPE & RF_GHYPE & RF_EHYP**                  |
+| :---                | :---                                               |
 | Yes                 | RF_PHYPE = Y or/and RF_GHYPE = Y or/and RF_EHYP = Y|
 | No                  | Any combination of U and N with at least one N     |
 | Missing             | RF_PHYPE = U and RF_GHYPE = U and EHYPE = U        |
+
+```{r}
+births20to24_step8 <- births20to24_step8 %>%
+                            mutate(
+                              # Any Hypertension
+                              HYPE.recode = case_when(
+                                RF_PHYPE == "Y" | RF_GHYPE == "Y" | RF_EHYP == "Y" ~ "Yes",
+                                RF_PHYPE == "N" & RF_GHYPE %in% c("N", "U") & RF_EHYP %in% c("N", "U") ~ "No",
+                                RF_PHYPE %in% c("N", "U") & RF_GHYPE == "N" & RF_EHYP %in% c("N", "U") ~ "No",
+                                RF_PHYPE %in% c("N", "U") & RF_GHYPE %in% c("N", "U") & RF_EHYP == "N" ~ "No",
+                                RF_PHYPE == "U" & RF_GHYPE == "U" & RF_EHYP == "U" ~ NA_character_,
+                                TRUE ~ "check"
+                              ),
+                              # Recode to factor type
+                              HYPE.recode.fact = factor(
+                                HYPE.recode,
+                                levels = c("No", "Yes")
+                              )
+                            )
+
+#### Data checks!
+class(births20to24_step8$HYPE.recode.fact)
+
+table(births20to24_step8$HYPE.recode.fact, useNA = "always")
+
+births20to24_step8 %>%
+    count(HYPE.recode.fact, RF_PHYPE, RF_GHYPE, RF_EHYP)
+
+```
+
+
+### Try it on your own! (10 min)
+
+Create a new object named *births20to24_step8.pt2* from *births20to24_step8*. Create the new recoded variable for the 10-year age category variables using *mutate()* and *case_when()*. 
+
+Don't forget to transform it into a factor variable named *MAGER.recode.fact*!
+
 
 **10-year Age Categories**
 
@@ -601,19 +608,6 @@ Create a new object named *births20to24_step8.pt2* from *births20to24_step8*. Cr
 ```{r}
 births20to24_step8.pt2 <- births20to24_step8 %>%
                             mutate(
-                              # Any Hypertension
-                              HYPE.recode = case_when(
-                                RF_PHYPE == "Y" | RF_GHYPE == "Y" | RF_EHYP == "Y" ~ "Yes",
-                                RF_PHYPE == "N" & RF_GHYPE %in% c("N", "U") & RF_EHYP %in% c("N", "U") ~ "No",
-                                RF_PHYPE %in% c("N", "U") & RF_GHYPE == "N" & RF_EHYP %in% c("N", "U") ~ "No",
-                                RF_PHYPE %in% c("N", "U") & RF_GHYPE %in% c("N", "U") & RF_EHYP == "N" ~ "No",
-                                RF_PHYPE == "U" & RF_GHYPE == "U" & RF_EHYP == "U" ~ NA_character_,
-                                TRUE ~ "check"
-                              ),
-                              HYPE.recode.fact = factor(
-                                HYPE.recode,
-                                levels = c("No", "Yes")
-                              ),
                               # Age Categories
                               MAGER.recode = case_when(
                                 MAGER.int %in% c(12:14) ~ "Under 15 Years",
@@ -622,6 +616,7 @@ births20to24_step8.pt2 <- births20to24_step8 %>%
                                 MAGER.int %in% c(35:44) ~ "35-44 Years",
                                 MAGER.int %in% c(45:50) ~ "45+ Years"
                               ),
+                              # Recode to factor type
                               MAGER.recode.fact = factor(
                                 MAGER.recode,
                                 levels = c("Under 15 Years", "15-24 Years", "25-34 Years",
@@ -629,19 +624,10 @@ births20to24_step8.pt2 <- births20to24_step8 %>%
                                            )
                               )
                             )
-
 ```
 
 ```{r}
 ### Data checks! ###
-
-# Any Hypertension ---
-class(births20to24_step8.pt2$HYPE.recode.fact)
-
-table(births20to24_step8.pt2$HYPE.recode.fact, useNA = "always")
-
-births20to24_step8.pt2 %>%
-    count(HYPE.recode.fact, RF_PHYPE, RF_GHYPE, RF_EHYP)
 
 # Age Categories ---
 class(births20to24_step8.pt2$MAGER.recode.fact)
@@ -650,7 +636,6 @@ table(births20to24_step8.pt2$MAGER.recode.fact, useNA = "always")
 
 births20to24_step8.pt2 %>%
     count(MAGER.recode.fact, MAGER.int)
-
 ```
 
 
@@ -669,16 +654,19 @@ births20to24_step9 <- births20to24_step8.pt2 %>%
 names(births20to24_step9)
 ```
 
-### Try it on your own!
-
 Turns out we don't actually need *DBWT*. Let's create a new object named *births20to24.final* from *births20to24_step9* and drop *DBWT* using the drop variable method: (i.e. using a *-* before the variable list [*all_of(c(vars))*]).
 
 
 ```{r}
+# Option #1: Use a pre-defined list of variables
 drop_vars <- c("DBWT")
 
 births20to24.final <- births20to24_step9 %>%
                         dplyr::select(-all_of(drop_vars))
+
+# Option #2: List variables directly in function
+births20to24.final <- births20to24_step9 %>%
+                        dplyr::select(-c("DBWT"))
 
 ```
 
@@ -686,9 +674,6 @@ births20to24.final <- births20to24_step9 %>%
 
 Similar to other statistical programming languages, we do not need to have our code run step by step! We can use R pipes (*%>%*) to stack our code all in one chunk.
 
-### Try it on your own! 
-
-Combine steps #5 through #8 using pipes to create a new object named *births20to24.final2* from *births18to24*. Recall that consecutive *mutate()* and *filter()* statements can be combined in the same *mutate()* and *filter()* statements with commas.
 
 ```{r}
 # Define variables for selection in step 9
@@ -792,7 +777,6 @@ save(births20to24.final,
 
 Before closing out, click the little broom button in the top right environment tab to empty your environment.
 
-# Break!
 
 # Part 2. Report Summaries
 
@@ -837,9 +821,14 @@ table(births20to24.final$OEGest_R3.fact) # matched PTB count
 
 We can adapt the code above to give us one row of counts per year. In R, we can do this by piping (*%>%*) *group_by(variable_name)* before the function you want to group by. Try adapting the code above to group by *DOB_YY*.
 
-### Try it on your own!
+### Try it on your own! (10 min)
 
-Name your new object *year.count20_24*.
+Name your new object *year.count20_24*. The final output should look like:
+
+```{r, echo = F, eval = F, out.width = "55%"}
+knitr::include_graphics(here("r fundamentals pngs", "data_prep_pngs", "year.count20_24.png"))
+```
+
 
 ```{r}
 year.count20_24 <- births20to24.final %>%
@@ -852,17 +841,28 @@ year.count20_24 <- births20to24.final %>%
 
 ```
 
+```{r}
+year.count20_24 %>%
+          flextable() # View table
+```
+
 **Important:** the *group_by()* function is **sticky** and cannot be visualized in your data frame. What this means it is lingers on for future tasks unless you add the *ungroup()* function after the tasks you wanted to group by to tell R "Hey, we are done grouping by this variable!". 
 
 Before we switch over to building our table, it might be nice to have a table that has the top row with the aggregated count, and then each year below it.
 
-### Try it on your own!
+### Try it on your own! (10 min)
 
 Using functions we've covered earlier today, create a new object named *counts.table* - a 6 row table with aggregated year count as the first row, and 2020-2024 below it:
 
-* Set the value of *DOB_YY* to *Overall 2020-2024* for the aggregate row
-* Use the *rename("new_name" = "old_name")* function to rename *DOB_YY* to *Birth Year*
+* *row_bind()* the *count20_24* and *year.count20_24* data frames, so that the 2020-2024 aggregate row is the first row.
+* Set the value of *DOB_YY* for the aggregate row to be *Overall 2020-2024* 
+* Use the *rename("new_name" = "old_name")* function to rename the *DOB_YY* variable to *Birth Year*
 * Use the *relocate(variable)* function to ensure *Birth Year* is the first column
+
+The final output of *counts.table* should look like:
+```{r, echo = F, eval = F, out.width = "55%"}
+knitr::include_graphics(here("r fundamentals pngs", "data_prep_pngs", "data_prep_table_output.png"))
+```
 
 ```{r}
 counts.table <- count20_24 %>% # Start with aggregate df to ensure 1st row
@@ -872,15 +872,25 @@ counts.table <- count20_24 %>% # Start with aggregate df to ensure 1st row
                   relocate(`Birth Year`) # move `Birth Year` to be 1st column (note the ``!)
 ```
 
+```{r}
+counts.table %>%
+          flextable() # View table
+```
 
 
 # 3. Preterm Birth Rates by Year
 
-We are going to create a time trend figure of preterm birth rates per 1,000 live births by year. Let's calculate our rates!
+We are going to create a time trend figure of preterm birth rates per 100 live births by year. Let's calculate our rates!
 
-### Try it on your own!
+### Try it on your own! (5 min)
 
 Using functions we've already covered, create a new object named *year.rate20_24* from *counts.table* with a new variable named *preterm_rate_per100* that is the number of preterm births divided by the live births, and multiplied by 100.
+
+The final output of *year.rate20_24* should look like:
+```{r, echo = F, eval = F, out.width = "55%"}
+knitr::include_graphics(here("r fundamentals pngs", "data_prep_pngs", "year.rate20_24.png"))
+```
+
 
 **Hint:** arithmetic functions work very similarly to your usual stats package languages.
 
@@ -912,11 +922,7 @@ year.rate20_24 %>% # 1 decimal place for the rate - much better!
 
 We will use *counts.table* for the counts table and *year.rate20_24* for the preterm birth rate time trend figure. To make these easily accessible in our report document, let's save them to our *clean* data folder. 
 
-### Try it on your own!
-
-Let's save these two data frames as a .RData file in the *clean* data folder within the *training_data_files* folder with the name *births20to24_basicsummary.RData*.
-
-**Hint:** You should store both data frames in the same .RData file. Unfortunately the help documentation isn't great for this function, so try a quick google search if you get stuck!
+We can store multiple data frames in the same .RData file by listing them:
 
 ```{r, eval = F}
 save(counts.table, year.rate20_24, # we can list multiple files 
@@ -955,9 +961,14 @@ head(age.raceeth_long)
 nrow(births20to24.final)*2 # double because two variables now stacked as rows
 ```
 
-### Try it on your own!
+### Try it on your own! (10 min)
 
 Create a new object named *age.raceeth.rates* from *age.raceeth_long* to calculate the preterm birth rates for each variable's categories using the functions we've already covered. Use the same variable names we created previously (i.e., *Preterm Births*, *Live Births*, and *preterm_rate_per100*).
+
+The final output of *age.raceeth.rates* should look like:
+```{r, echo = F, eval = F, out.width = "55%"}
+knitr::include_graphics(here("r fundamentals pngs", "data_prep_pngs", "age.raceeth.rates_table_view.png"))
+```
 
 **Hint:** You'll need to group by two variables to first calculate the preterm birth and live birth counts.
 
@@ -1003,7 +1014,7 @@ levels(age.raceeth.rates$Value)
 When you're done, save your new data frame as *age_raceeth_rates.RData*.
 
 ```{r, eval = F}
-save(age.raceeth.rates, # we can list multiple files 
+save(age.raceeth.rates, # we can list multiple objects
      file = here("training_data_files", "clean", "age_raceeth_rates.RData")
 )
 ```
@@ -1012,7 +1023,7 @@ save(age.raceeth.rates, # we can list multiple files
 
 # 5. Preterm Birth Rates by Hypertension History and Diabetes History
 
-### Try it on your own!
+### Try it on your own! (20 min)
 
 We now want to prepare our data to make a similar figure as we just made for maternal age and race/ethnicity. Using code we've already covered:
 
@@ -1026,6 +1037,15 @@ We now want to prepare our data to make a similar figure as we just made for mat
   8. Sweep your environment before moving over to the report.rmd
   9. Move over to the report.rmd file and add the loaded dataset code to the setup R code chunk
   10. Check on how your neighbors are doing, and we'll move on to the figure in a few minutes!
+
+The final output of *hype.diab.rates* should look like:
+```{r, echo = F, eval = F, out.width = "55%"}
+knitr::include_graphics(here("r fundamentals pngs", "data_prep_pngs", "hype.diab.rates_table_view.png"))
+```
+
+**Reminder! If you get stuck, you can always check the complete version (*data_prep.rmd*) in the *training_complete_examples* folder.**
+
+
 
 ```{r eval = F}
 # Load our clean analytic dataset
