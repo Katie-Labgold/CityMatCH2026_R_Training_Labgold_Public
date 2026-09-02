@@ -7,6 +7,7 @@ This repository contains files for the CityMatCH 2026 **R for Applied MCH Epidem
 1. [Download and install R](https://cran.r-project.org/bin/windows/base/)
 2. [Download and install R Studio](https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads)
 3. [Install](https://guides.hshsl.umaryland.edu/R/install) the following R packages (and any additional packages prompted during their installation): 
+   + rmarkdown
    + here
    + dplyr
    + flextable
