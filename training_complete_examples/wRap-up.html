@@ -213,7 +213,7 @@ Katie Labgold, PhD, MPH
 <h2>0. Wrap Up</h2>
 <p>In just a few hours, you created a standalone report ready to share with your team for internal review!</p>
 
-<img data-src="r%20fundamentals%20pngs/Utkarsh%20Ambudkar%20Reaction%20GIF%20by%20CBS.gif" class="r-stretch"></section>
+<img data-src="r%20fundamentals%20pngs/Utkarsh%20Ambudkar%20Reaction%20GIF%20by%20CBS.gif" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="continuing-your-r-journey" class="slide level2">
 <h2>1. Continuing your R Journey</h2>
 <ul>
@@ -451,18 +451,17 @@ DIAB.recodeYes 1.268844 1.4533003</code></pre>
 <div class="cell" data-messages="false">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">library</span>(survey)</span>
 <span id="cb14-2"><a href=""></a></span>
-<span id="cb14-3"><a href=""></a></span>
-<span id="cb14-4"><a href=""></a><span class="co"># Create survey object</span></span>
-<span id="cb14-5"><a href=""></a>design_nsch24 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(</span>
-<span id="cb14-6"><a href=""></a>                    <span class="at">ids =</span> <span class="sc">~</span>HHID, <span class="co"># household id</span></span>
-<span id="cb14-7"><a href=""></a>                    <span class="at">strata =</span> <span class="sc">~</span>STRATUM, <span class="co"># sampling strata variable</span></span>
-<span id="cb14-8"><a href=""></a>                    <span class="at">weights =</span> <span class="sc">~</span>FWC, <span class="co"># weight variable</span></span>
-<span id="cb14-9"><a href=""></a>                    <span class="at">data =</span> nsch2024, <span class="co"># data with CLEANED variables!</span></span>
-<span id="cb14-10"><a href=""></a>                    <span class="at">nest =</span> <span class="cn">TRUE</span> <span class="co"># nested design</span></span>
-<span id="cb14-11"><a href=""></a>)</span>
-<span id="cb14-12"><a href=""></a></span>
-<span id="cb14-13"><a href=""></a><span class="co"># View class type</span></span>
-<span id="cb14-14"><a href=""></a><span class="fu">class</span>(design_nsch24)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-3"><a href=""></a><span class="co"># Create survey object</span></span>
+<span id="cb14-4"><a href=""></a>design_nsch24 <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(</span>
+<span id="cb14-5"><a href=""></a>                    <span class="at">ids =</span> <span class="sc">~</span>HHID, <span class="co"># household id</span></span>
+<span id="cb14-6"><a href=""></a>                    <span class="at">strata =</span> <span class="sc">~</span>STRATUM, <span class="co"># sampling strata variable</span></span>
+<span id="cb14-7"><a href=""></a>                    <span class="at">weights =</span> <span class="sc">~</span>FWC, <span class="co"># weight variable</span></span>
+<span id="cb14-8"><a href=""></a>                    <span class="at">data =</span> nsch2024, <span class="co"># data with CLEANED variables!</span></span>
+<span id="cb14-9"><a href=""></a>                    <span class="at">nest =</span> <span class="cn">TRUE</span> <span class="co"># nested design</span></span>
+<span id="cb14-10"><a href=""></a>)</span>
+<span id="cb14-11"><a href=""></a></span>
+<span id="cb14-12"><a href=""></a><span class="co"># View class type</span></span>
+<span id="cb14-13"><a href=""></a><span class="fu">class</span>(design_nsch24)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "survey.design2" "survey.design" </code></pre>
 </div>
@@ -477,8 +476,8 @@ DIAB.recodeYes 1.268844 1.4533003</code></pre>
 <span id="cb16-3"><a href=""></a>        <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co"># necessary if need to remove any missing values</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                mean     SE
-ADHD.factYes 0.10776 0.0025
-ADHD.factNo  0.89224 0.0025</code></pre>
+ADHD.factNo  0.89224 0.0025
+ADHD.factYes 0.10776 0.0025</code></pre>
 </div>
 </div>
 <p><br></p>
@@ -488,7 +487,7 @@ ADHD.factNo  0.89224 0.0025</code></pre>
 <span id="cb18-2"><a href=""></a>           design_nsch24) <span class="co"># design object</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 2.5% 97.5%
-ADHD.fact 0.892 0.887 0.897</code></pre>
+ADHD.fact 0.108 0.103 0.113</code></pre>
 </div>
 </div>
 </section>
@@ -503,25 +502,25 @@ ADHD.fact 0.892 0.887 0.897</code></pre>
 <span id="cb20-5"><a href=""></a>tab</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         ANXIETY.fact
-ADHD.fact      Yes       No
-      Yes  3404325  4292113
-      No   4641225 59029599</code></pre>
+ADHD.fact       No      Yes
+      No  59029599  4641225
+      Yes  4292113  3404325</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="co"># Weighted Row Proportions</span></span>
 <span id="cb22-2"><a href=""></a><span class="fu">prop.table</span>(tab, <span class="at">margin =</span> <span class="dv">1</span>) <span class="co"># within ADHD.fact</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         ANXIETY.fact
-ADHD.fact        Yes         No
-      Yes 0.44232476 0.55767524
-      No  0.07289406 0.92710594</code></pre>
+ADHD.fact         No        Yes
+      No  0.92710594 0.07289406
+      Yes 0.55767524 0.44232476</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="co"># Weighted Column Proportions</span></span>
 <span id="cb24-2"><a href=""></a><span class="fu">prop.table</span>(tab, <span class="at">margin =</span> <span class="dv">2</span>) <span class="co"># within ANXIETY.fact</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         ANXIETY.fact
-ADHD.fact        Yes         No
-      Yes 0.42313142 0.06778264
-      No  0.57686858 0.93221736</code></pre>
+ADHD.fact         No        Yes
+      No  0.93221736 0.57686858
+      Yes 0.06778264 0.42313142</code></pre>
 </div>
 </div>
 </section>
@@ -551,9 +550,9 @@ Survey design:
 subset(design_nsch24, CURRINS == 1)
 
 Coefficients:
-               Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)     0.32668    0.04729   6.908 4.96e-12 ***
-ANXIETY.factNo  2.25111    0.06067  37.103  &lt; 2e-16 ***
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     -2.57779    0.03801  -67.81   &lt;2e-16 ***
+ANXIETY.factYes  2.25111    0.06067   37.10   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -563,14 +562,14 @@ Number of Fisher Scoring iterations: 5</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="fu">exp</span>(model.wt<span class="sc">$</span>coefficients)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   (Intercept) ANXIETY.factNo 
-      1.386352       9.498297 </code></pre>
+<pre><code>    (Intercept) ANXIETY.factYes 
+     0.07594176      9.49829701 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">exp</span>(<span class="fu">confint</span>(model.wt))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                  2.5 %    97.5 %
-(Intercept)    1.263635  1.520987
-ANXIETY.factNo 8.433355 10.697718</code></pre>
+<pre><code>                     2.5 %      97.5 %
+(Intercept)     0.07048919  0.08181611
+ANXIETY.factYes 8.43335451 10.69771773</code></pre>
 </div>
 </div>
 <p><br></p>
@@ -668,8 +667,13 @@ ANXIETY.factNo 8.433355 10.697718</code></pre>
 </section>
 <section id="stay-in-touch" class="slide level2">
 <h2>7. Stay in touch!</h2>
+<p>klabgold.epi@outlook.com</p>
+<p><a href="https://github.com/Katie-Labgold" class="uri">https://github.com/Katie-Labgold</a></p>
+<p><br></p>
+<p>Evaluation: <a href="https://forms.gle/qxyAaHYgLZwuD49L7" class="uri">https://forms.gle/qxyAaHYgLZwuD49L7</a></p>
 
-</section>
+
+<img data-src="r%20fundamentals%20pngs/evaluation-qrcode.png" class="quarto-figure quarto-figure-center r-stretch" width="334"></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

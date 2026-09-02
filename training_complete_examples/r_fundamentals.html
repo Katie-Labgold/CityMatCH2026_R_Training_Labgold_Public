@@ -199,13 +199,13 @@
 
 <section id="welcome-to-r-for-applied-mch-epidemiologists" class="slide level2">
 <h2>Welcome to R for Applied MCH Epidemiologists!</h2>
-<p>Please make sure you have R and R studio installed, and have downloaded the workshop materials: <a href="https://github.com/Katie-Labgold/CityMatCH2026_R_Training_Labgold" class="uri">https://github.com/Katie-Labgold/CityMatCH2026_R_Training_Labgold</a></p>
+<p>Please make sure you have R and R studio installed, and have downloaded the workshop materials: <a href="https://github.com/Katie-Labgold/CityMatCH2026_R_Training_Labgold_Public" class="uri">https://github.com/Katie-Labgold/CityMatCH2026_R_Training_Labgold_Public</a></p>
 
 <img data-src="r%20fundamentals%20pngs/github_download.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="the-wonderful-world-of-r" class="slide level2">
 <h2>The wonderful world of R!</h2>
 <p><br></p>
-<p><strong>My Goal:</strong> In 20 minutes or less, introduce you to some R fundamentals (<em>with a focus on differences from your usual software</em>) that will before diving into the rest of the workshop.</p>
+<p><strong>My Goal:</strong> In 20 minutes or less, introduce you to some R fundamentals (<em>with a focus on differences from your usual software</em>) before diving into the rest of the workshop.</p>
 <aside class="notes">
 <p>But first, let me introduce myself!</p>
 <style type="text/css">
@@ -235,7 +235,12 @@
 
 <img data-src="r%20fundamentals%20pngs/r_studio_intro.png" class="quarto-figure quarto-figure-center r-stretch" width="388"><aside class="notes">
 <p>Go ahead an open your R Studio and let’s take a quick tour of the setup.</p>
-<p>You’ll notice your screen looks a bit different than mine to start. Click <code>file</code> , <code>New File</code>, &amp; <code>R script</code>. Now we all should have 4 main panels.</p>
+<p>You’ll notice your screen looks a bit different than mine to start.</p>
+<ul>
+<li><p>Mine is colored dark –&gt; this is a style feature of R studio</p></li>
+<li><p>Click <code>file</code> , <code>New File</code>, &amp; <code>R script</code>. Now we all should have 4 main panels.</p></li>
+</ul>
+<hr>
 <ol type="1">
 <li><p>On the top left, is our source pane. This is where we write code and view our data. This is similar to your SAS editor, SPSS syntax editor, or Stata Do-file editor.</p></li>
 <li><p>On the bottom left is the console pane. This is where R actually runs your commands. anything you type here runs immediately - similar to the SAS log, SPSS output viewer, or Stata command window.</p></li>
@@ -282,9 +287,28 @@
 <section id="coding-in-r-r-markdown" class="slide level2">
 <h2>3. Coding in R: R Markdown</h2>
 
-<img data-src="r%20fundamentals%20pngs/r_markdown.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="coding-in-r-r-markdown-1" class="slide level2">
-<h2>3. Coding in R: R Markdown</h2>
+<img data-src="r%20fundamentals%20pngs/r_markdown.png" class="quarto-figure quarto-figure-center r-stretch"><aside class="notes">
+<p>QUICK walk through of:</p>
+<ul>
+<li><p>YAML</p></li>
+<li><p>Code Chunk</p></li>
+<li><p>Free Text</p></li>
+<li><p>Header specification</p></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="coding-in-r-r-markdown-output" class="slide level2">
+<h2>3. Coding in R: R Markdown Output</h2>
 <p>Advantages of R Markdown:</p>
 <ul>
 <li class="fragment"><p>When want a clean output to share (word, pdf, or html)</p></li>
@@ -292,6 +316,23 @@
 </ul>
 
 <img data-src="r%20fundamentals%20pngs/r_markdown_knit.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="coding-in-r-r-markdown-code-chunks" class="slide level2">
+<h2>3. Coding in R: R Markdown Code Chunks</h2>
+<p>Code + output for each R chunk will show by default, but we can control visibility using pre-defined options.</p>
+
+<img data-src="r%20fundamentals%20pngs/markdown_chunk.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="coding-in-r-r-markdown-code-chunks-1" class="slide level2">
+<h2>3. Coding in R: R Markdown Code Chunks</h2>
+<ul>
+<li class="fragment"><p><code>echo = FALSE</code> to hide code</p></li>
+<li class="fragment"><p><code>results = 'hide'</code> to hide output</p></li>
+<li class="fragment"><p><code>include = FALSE</code> to run chunk, but hide code + output</p></li>
+<li class="fragment"><p><code>eval = FALSE</code> to skip chunk (does not run)</p></li>
+<li class="fragment"><p><code>warning = FALSE</code> to silence any warnings</p></li>
+<li class="fragment"><p><code>message = FALSE</code> to silence any messages/information</p></li>
+</ul>
+<p>Complete list of chunk options: <a href="https://rstudio.github.io/cheatsheets/html/rmarkdown.html#chunk-options" class="uri">https://rstudio.github.io/cheatsheets/html/rmarkdown.html#chunk-options</a></p>
+</section>
 <section id="objects" class="slide level2 scrollable">
 <h2>4. Objects</h2>
 <p>One of the biggest differences of R vs other statistical programs is that R is an <strong>object oriented language</strong>.</p>
@@ -336,6 +377,7 @@
 </div>
 <p><br></p>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>iris[<span class="dv">1</span>, <span class="dv">3</span>] <span class="co"># pull row 1, column 3</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.4</code></pre>
 </div>
@@ -363,10 +405,10 @@
 <p>We can make a new object by assigning the old object to a new object using either <code>&lt;-</code> or <code>=</code> (<code>&lt;-</code> is preferred)</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>iris2 <span class="ot">&lt;-</span> iris</span>
-<span id="cb6-2"><a href=""></a></span>
-<span id="cb6-3"><a href=""></a></span>
-<span id="cb6-4"><a href=""></a>iris3 <span class="ot">=</span> iris</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>iris2 <span class="ot">&lt;-</span> iris</span>
+<span id="cb7-2"><a href=""></a></span>
+<span id="cb7-3"><a href=""></a></span>
+<span id="cb7-4"><a href=""></a>iris3 <span class="ot">=</span> iris</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><br></p>
 <div class="fragment">
@@ -379,7 +421,7 @@
 <p>We can install packages in R using the following function.</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">install.packages</span>(<span class="st">"dplyr"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">install.packages</span>(<span class="st">"dplyr"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><br></p>
 <div class="fragment">
@@ -392,7 +434,7 @@
 <p>Once a package has been installed, we can load it by calling:</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">library</span>(dplyr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">library</span>(dplyr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><br></p>
 <div class="fragment">
@@ -403,7 +445,7 @@
 <h2>5. Packages cont.</h2>
 <p>A very nifty feature of R is the built-in help window! You can get the documentation for a function in the bottom right R studio helper panel by running:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>?<span class="fu">mean</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>?<span class="fu">mean</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 <img data-src="r%20fundamentals%20pngs/r_helper.png" class="quarto-figure quarto-figure-center r-stretch" width="419"></section>
@@ -413,7 +455,7 @@
 <p><br></p>
 <p>For example, my copied file path is: <code>"C:\Users\klabg\K Labgold R\CityMatCH2026_RTrain"</code> but you’ll need to switch it to:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="st">"training_data_files/clean/births20to24_final.RData"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="st">"training_data_files/clean/births20to24_final.RData"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><br></p>
 <div class="fragment">
@@ -426,11 +468,11 @@
 <p>In R, all function calls need parentheses:</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">print</span>(iris)</span>
-<span id="cb11-2"><a href=""></a></span>
-<span id="cb11-3"><a href=""></a><span class="fu">mean</span>(iris<span class="sc">$</span>Petal.Width)</span>
-<span id="cb11-4"><a href=""></a></span>
-<span id="cb11-5"><a href=""></a><span class="fu">library</span>(dplyr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">print</span>(iris)</span>
+<span id="cb12-2"><a href=""></a></span>
+<span id="cb12-3"><a href=""></a><span class="fu">mean</span>(iris<span class="sc">$</span>Petal.Width)</span>
+<span id="cb12-4"><a href=""></a></span>
+<span id="cb12-5"><a href=""></a><span class="fu">library</span>(dplyr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="syntax-snippets---case-sensitivity" class="slide level2">
@@ -467,10 +509,10 @@
 <p>In R, we can string together multiple R commands to form a single step using a <strong>pipe</strong> (<code>%&gt;%</code> or <code>|&gt;</code>).</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>iris <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">length.plus.width =</span> Petal.Width <span class="sc">+</span> Petal.Length) <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href=""></a>  <span class="fu">select</span>(Petal.Width, Petal.Length, Species, length.plus.width) <span class="sc">%&gt;%</span></span>
-<span id="cb12-4"><a href=""></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>iris <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">length.plus.width =</span> Petal.Width <span class="sc">+</span> Petal.Length) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href=""></a>  <span class="fu">select</span>(Petal.Width, Petal.Length, Species, length.plus.width) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href=""></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Petal.Width Petal.Length Species length.plus.width
 1         0.2          1.4  setosa               1.6
@@ -501,22 +543,46 @@
 <p>We can comment in R using <code>#</code> then writing the comment. The comment will continue until you enter to the next line.</p>
 <p><br></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>iris <span class="sc">%&gt;%</span> <span class="co"># original object</span></span>
-<span id="cb14-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">length.plus.width =</span> Petal.Width <span class="sc">+</span> Petal.Length) <span class="sc">%&gt;%</span> <span class="co"># make new variable</span></span>
-<span id="cb14-3"><a href=""></a>  <span class="fu">select</span>(Petal.Width, Petal.Length, Species, length.plus.width) <span class="sc">%&gt;%</span> <span class="co"># select variables</span></span>
-<span id="cb14-4"><a href=""></a>  <span class="fu">head</span>() <span class="co"># show first 6 rows </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>iris <span class="sc">%&gt;%</span> <span class="co"># original object</span></span>
+<span id="cb15-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">length.plus.width =</span> Petal.Width <span class="sc">+</span> Petal.Length) <span class="sc">%&gt;%</span> <span class="co"># make new variable</span></span>
+<span id="cb15-3"><a href=""></a>  <span class="fu">select</span>(Petal.Width, Petal.Length, Species, length.plus.width) <span class="sc">%&gt;%</span> <span class="co"># select variables</span></span>
+<span id="cb15-4"><a href=""></a>  <span class="fu">head</span>() <span class="co"># show first 6 rows </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
+<section id="course-file-setup" class="slide level2">
+<h2>9. Course File Setup</h2>
+
+<img data-src="r%20fundamentals%20pngs/project_setup.png" class="quarto-figure quarto-figure-center r-stretch"><aside class="notes">
+<p>We should have all downloaded the course folder from github and saved it in our desired location.</p>
+<p>Your file structure should look like this!</p>
+<p><strong>Walk through what each document is</strong>.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="r-cheat-sheet-for-sas-spss-stata-users" class="slide level2">
-<h2>9. R Cheat Sheet for SAS, SPSS, Stata Users</h2>
+<h2>R Cheat Sheet for SAS, SPSS, Stata Users</h2>
 <p>Throughout the day, you can reference this cheat sheet to build intuition about R syntax:</p>
 
 <img data-src="r%20fundamentals%20pngs/r_cheatsheet.png" class="quarto-figure quarto-figure-center r-stretch"><div class="fragment">
 <p><em>Notice an error or have suggestions for the SAS, SPSS, or Stata example code - let me know!</em></p>
 </div>
 </section>
+<section id="todays-project" class="slide level2">
+<h2>10. Today’s Project</h2>
+<p>Word document report of preterm births from US Territories during 2020-2025, <strong>made exclusively in R</strong>!</p>
+
+<img data-src="r%20fundamentals%20pngs/report_screenshot.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="questions" class="slide level2">
-<h2>10. Questions?</h2>
+<h2>11. Questions?</h2>
 
 <img data-src="r%20fundamentals%20pngs/Abbott%20Thats%20How%20Its%20Done%20GIF%20by%20ABC%20Network.gif" class="quarto-figure quarto-figure-center r-stretch"><p><strong>P.S. did I mention this presentation was made exclusively in R?</strong></p>
 
