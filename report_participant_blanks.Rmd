@@ -17,10 +17,10 @@ library(flextable)
 library(ggplot2)
 
 # After Part 2, Step #3 of data_prep.rmd, load `births20to24_basicsummary`
-
+load(here("training_data_files", "clean", "births20to24_basicsummary.rdata"))
 
 # After Part 2, Step #4 of data_prep.rmd, load `age.raceeth.rates`
-
+load(here("training_data_files", "clean", "age_raceeth_rates.rdata"))
 
 # After Part 3, Step #5 of data_prep.rmd, load `hype.diab.rates`
 
@@ -66,25 +66,15 @@ tbl.pt3_2
 
 ```
 
-```{r include = F}
+```{r echo = F}
 ### Format for word: change column widths, force rows to stay together in word
-tbl.pt3_3 <- tbl.pt3_2 %>%
-              width(j = c("Birth Year", "Preterm Births", "Live Births", "Preterm Births per 100 Live Births"), # set column widths
-                width = c(1.5, 1.2, 1.2, 2)) %>%
-              paginate(init = TRUE) # keeps the rows together (not splitting between pages in word)
-
-tbl.pt3_3
-
-```
-
-```{r, echo = F}
-### Try it on your own - center column text using cheat sheet: https://ardata-fr.github.io/flextable-book/static/pdf/cheat_sheet_flextable.pdf
-
-tbl.pt3_3 %>%
-  ### ADD CODE HERE TO CENTER COLUMN TEXT
+tbl.pt3_2 %>%
+            width(j = c("Birth Year", "Preterm Births", "Live Births", "Preterm Births per 100 Live Births"), # set column widths
+              width = c(1.5, 1.2, 1.2, 2)) %>%
+              paginate(init = TRUE) %>% # keeps the rows together (not splitting between pages in word)
+              align(align = "center", part = "all") # align columns
 
 ```
-
 
 
 ## [Preterm birth rates by year header]
