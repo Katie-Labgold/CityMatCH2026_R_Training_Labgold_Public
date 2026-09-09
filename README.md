@@ -45,3 +45,5 @@ Users must comply with the NCHS Data Use Restrictions under 42 U.S.C. 242m(d):
 
 + Do not present or publish birth counts of 9 or fewer or rates based on counts of 9 or fewer.
 For full documentation, see the official [NCHS User Guide.](https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm)
+
+Citation: National Center for Health Statistics. *Vital Statistics Online Data Portal*. Centers for Disease Control and Prevention. Accessed July 13, 2026. https://www.cdc.gov/nchs/data_access/vitalstatsonline.htm
