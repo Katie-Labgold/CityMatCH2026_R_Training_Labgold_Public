@@ -19,15 +19,15 @@ This repository contains files for the CityMatCH 2026 **R for Applied MCH Epidem
 5. Download and save course materials from home GitHub page by clicking the green `code` button and selecting `download zip`.
 
 ## Files in this Drive
-0. README.md: this file includes the details of this page
-1. CityMatCH2026_RTrain.RProj: the R project we will use to organize our project materials
-2. R_cheatsheet_flextable.html: Cheat sheet of R functions for SAS, SPSS, and Stata users
-3. data_prep_participant_blanks.rmd: **UPDATE THESE NAMES TO THE BLANK VERSIONS**
-4. report_participant_blanks.rmd **UPDATE THESE NAMES TO THE BLANK VERSIONS**
-5. report_style_template.docx
-6. recommendations.png
-7. training_data_files folder
-8. training_complete_examples folder
+0. README.md: this file includes the details of this page.
+1. CityMatCH2026_RTrain.RProj: the R project we will use to organize our project materials.
+2. R_cheatsheet_flextable.html: Cheat sheet of R functions for SAS, SPSS, and Stata users.
+3. data_prep_participant_blanks.rmd: 'fill in the blanks' version of the data prep rmd.
+4. report_participant_blanks.rmd: 'fill in the blanks' version of the final report rmd.
+5. report_style_template.docx: word document that tells R how to style the final report.
+6. recommendations.png: recommendation image for the final report. NOTE: this must live in the same folder as the rmd.
+7. training_data_files folder: raw training data.
+8. training_complete_examples folder: course presentations and complete versions of the data prep and report rmds.
 
 
 -----------
