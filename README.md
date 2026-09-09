@@ -29,7 +29,7 @@ This repository contains files for the CityMatCH 2026 **R for Applied MCH Epidem
 7. **training_data_files folder**: raw training data.
 8. **training_complete_examples folder**: course presentations and complete versions of the data prep and report rmds.
 
-## Citing this Repository
+## Citing this Repo
 
 Labgold K. *CityMatCH2026_R_Training_Labgold*. Version 1. GitHub; 2026. Accessed [Month Day, Year]. https://github.com/Katie-Labgold/CityMatCH2026_R_Training_Labgold_Public/
 
