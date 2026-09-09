@@ -4,7 +4,9 @@ This repository contains files for the CityMatCH 2026 **R for Applied MCH Epidem
 
 ## Course Prerequisites
 
-1. [Download and install R](https://cran.r-project.org/bin/windows/base/)
+1. Download and install R
+   + Windows: https://cran.r-project.org/bin/windows/base/
+   + Mac: https://cran.r-project.org/bin/macosx/
 2. [Download and install R Studio](https://docs.posit.co/ide/user/#rstudio-ide-oss-downloads)
 3. [Install](https://guides.hshsl.umaryland.edu/R/install) the following R packages (and any additional packages prompted during their installation): 
    + rmarkdown
